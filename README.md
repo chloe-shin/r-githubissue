@@ -16,7 +16,7 @@ To create a GIF, use [LiceCap](http://www.cockos.com/licecap/), [RecordIt](http:
 <img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 ```
 
-## Detail in required
+## Detail in required - note taken by Khoa
 
 - [ ] User can see his/her avatar on the right of navbar.
 - [ ] User can navigate back to homepage when click logo on left side.
