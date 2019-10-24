@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import Repo from './component/Repo';
-import Nav from './component/Nav'
-import Footer from './component/Footer'
+import Nav from './component/Nav';
+import Footer from './component/Footer';
 import { get } from "http";
 
 // require("dotenv").config({path: '.env'});
