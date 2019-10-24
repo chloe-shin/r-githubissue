@@ -1,68 +1,99 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# CoderSchool FTW - _ Github Issue Project _
 
-## Available Scripts
+Created with love by: `Sierra - Group 2(Chloe Shin, Hai Chung, Anh Khoa Nguyen, Cuong Tran, Vu Nguyen)`
 
-In the project directory, you can run:
+View online at: `Your URL here`
 
-### `npm start`
+One or two sentence summary of your project.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Video Walkthrough
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Here's a walkthrough of implemented user stories.
 
-### `npm test`
+To create a GIF, use [LiceCap](http://www.cockos.com/licecap/), [RecordIt](http://www.recordit.co), or [Loom](http://www.useloom.com), and link the image here in the markdown.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+```
 
-### `npm run build`
+## Detail in required
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- [ ] User can see his/her avatar on the right of navbar.
+- [ ] User can navigate back to homepage when click logo on left side.
+- [ ] User can see his/her issues when click "Issues" on navbar.
+- [ ] User can search a repo from search field on navbar, the results will be displayed with pagination in the bottom. If there's no matched resutls, it will show an error message depends on returning code.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+- [ ] User can see search result on the right of screen, refer to github style with id of the repo owner.
+- [ ] User can see all issues of a repo when click on it.
+- [ ] User should be able to see the following information for each issue:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Issue Title _ Number of the issue
+Owner of the Issue
+Owner Avatar _ How long ago the issue was created in a human-friendly format (e.g. 2 days ago)
+Body of the Issue, descrition ( 120 words )
+Label - note the color as returned by the API.
+State of Issue (Open/Closed).
+The user should be able to see multiple pages of results, by clicking a pagination control.
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- [ ] User can see README.md of that repo rendered in Markdown.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Required Features 🎯
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- [ ] The user can enter a repository in a search bar, click "search", and see the associated issues. The repository should be of the format owner/repo-name, e.g. facebook/react.
+- [ ] If the repository does not exist, the user should see a proper error message.
+- [ ] The user should be able to see the following information for each issue:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Issue Title _ Number of the issue
+Owner of the Issue
+Owner Avatar _ How long ago the issue was created in a human-friendly format (e.g. 2 days ago)
+Body of the Issue
+Label - note the color as returned by the API.
+State of Issue (Open/Closed).
+The user should be able to see multiple pages of results, by clicking a pagination control.
 
-## Learn More
+- [ ] The user should be able to see the body of the issue rendered in markdown.
+- [ ] The user should be able to create a new issue via a modal for the repository, by clicking on a "new issue" button. Clicking on this button will pop open a modal that asks for the requisite fields.
+- [ ] If there is an error creating the issue (for example, the user not supplying all required parameters), there should be a nice error message to the user.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Optional User Stories
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- [ ] The user can see more details (including comments!) in a modal that's opened by clicking on the title of the issue.
+- [ ] The user, upon opening this modal, can add a comment via a textarea at the bottom of the page.
+- [ ] The user, upon opening the modal, can close the issue. If the person does not have the appropriate access to close an issue, the user sees a nicely formatted error message.
+- [ ] The user can see reactions attached to each comment (Reactions API).
+- [ ] The user can add reactions to a comment (API documentation).
 
-### Code Splitting
+- [ ] Input Fuzzy Matching: the user should be able to type in either https://github.com/facebook/react or facebook/react, BOTH should work.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
 
-### Analyzing the Bundle Size
+- [ ] User can see a filter by language on the left of result screen.
+- [ ] Instead of using Modal to show issue, use React Router (link) to navigate to different URL issues/:issueId to display the full issue. Have the Back button to go back to the previous page (from the individual issue page).
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+Preview
 
-### Making a Progressive Web App
+## Additional User Stories
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+- [ ] Think of something cool here, people. This is your last React group project!
 
-### Advanced Configuration
+## Time Spent and Lessons Learned
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+Time spent: **X** hours spent in total.
 
-### Deployment
+Describe any challenges encountered while building the app.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+## License
 
-### `npm run build` fails to minify
+    Copyright [yyyy] [name of copyright owner]
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
