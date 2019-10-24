@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
-import { Container, Row, Card, Button, Col } from "react-bootstrap";
 import "./App.css";
+import Repo from './component/Repo';
+import Nav from './component/Nav'
+import Footer from './component/Footer'
 import { get } from "http";
 
 // require("dotenv").config({path: '.env'});
@@ -48,27 +50,11 @@ function App() {
   }, []);
 
   return (
-    <Container>
-      <Row>
-        {issues.map(item => {
-          return (
-            <Col lg={12}>
-              <Card>
-                <Card.Img variant="top" src="holder.js/100px180" />
-                <Card.Body>
-                  <Card.Title>{item.title}</Card.Title>
-                  <Card.Text>
-                    Some quick example text to build on the card title and make
-                    up the bulk of the card's content.
-                  </Card.Text>
-                  <Button variant="primary">Go somewhere</Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          );
-        })}
-      </Row>
-    </Container>
+    <>
+      <Nav />
+      <Repo issues={issues}/>
+      <Footer />
+    </>
   );
 }
 
