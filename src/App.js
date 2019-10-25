@@ -24,7 +24,7 @@ function App() {
   const [token, setToken] = useState(null);
   const [issues, setIssues] = useState([]);
   const [query, setQuery] = useState("");
-  const [isSearch, setIsSearch] = useState(false);
+  const [isClear, setIsClear] = useState(false);
   console.log(token);
 
   const getAPI = async tok => {
@@ -44,7 +44,6 @@ function App() {
   };
 
   // console.log(issues);
-  console.log("query", query);
   useEffect(() => {
     const existingToken = sessionStorage.getItem("token");
     const accessToken =
@@ -86,11 +85,11 @@ function App() {
           <Button
             className="search-button"
             type="submit"
-            onClick={() => setIsSearch(!false)}
+            onClick={() => setIsClear(!false)}
           >
             Submit
           </Button>
-          {isSearch && (
+          {isClear && (
             <button onClick={() => getAPI()} className="clear-search">Clear current search query, filters, and sorts</button>
           )}
         </Form>
