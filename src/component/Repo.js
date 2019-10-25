@@ -44,8 +44,8 @@ export default function Repo(props) {
         <div className="col-md-9 col-sm-12">
           <div className="composer new-comment">
             <span className="comment-avatar">
-              <a className="d-inline-block">
-                <img className="avatar" src="#" alt="avata" />
+              <a className="d-inline-block" href={props.html_user} target="_blank">
+                <img className="avatar" src={props.avatar_url} alt="avata" />
               </a>
             </span>
             <div className="comment">

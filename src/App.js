@@ -11,6 +11,8 @@ console.log("id", clientId);
 function App() {
   const [token, setToken] = useState(null);
   const [issues, setIssues] = useState([]);
+  const [currentUser, setCurrentUser] = useState();
+
 
   const getAPI = async () => {
     
@@ -22,7 +24,12 @@ function App() {
     // console.table(jsonData);
     setIssues(Localissues);
   };
-  // console.log(issues);
+  const CurrentUser =async()=>{
+    const url = `https://api.github.com/user`
+    const response = await fetch(url);
+    const data = await response.json();
+    setCurrentUser(data);
+  }
   useEffect(() => {
     const existingToken = sessionStorage.getItem("token");
     const accessToken =
@@ -44,14 +51,17 @@ function App() {
 
     if (existingToken) {
       setToken(existingToken);
-      getAPI();
+      getAPI()
+      CurrentUser();
     }
   }, []);
 
   return (
     <>
       <Nav />
-      <Repo issues={issues}/>
+      <Repo issues={issues}
+        currentUser={currentUser}
+      />
       <Footer />
     </>
   );
