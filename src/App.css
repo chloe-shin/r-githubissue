@@ -1,21 +1,20 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Montserrat&display=swap');
 
+
+.App {
+  font-family: 'Roboto', sans-serif;
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: var(--primary-background);
+  font-size: 0.7rem;
+}
 /* Hai Chung */
 :root {
   --primary-border: #d1d5d9;
   --primary-background: white;
   --secondary-background: #e8eaec;
   --primary-strong: #8e949a;
-}
-
-.App {
-  min-height: 100vh;
-  min-width: 100vw;
-  background-color: var(--primary-background);
-  font-size: 0.7rem;
-}
-
-.Card {
-  width: 100%;
+  --primary-link: black;
 }
 
 .outterContainer {
@@ -81,7 +80,6 @@
   border-radius: 3px;
 }
 
-
 .discussionBody {
 
   padding: 12px 13px;
@@ -98,3 +96,74 @@
   /* width: 80rem; */
 }
 
+/* Chloe */
+
+.Card {
+  width: 80%;
+}
+
+.avatar {
+  width: 40px;
+  border: 1px solid rgba(0,0,0, 0.1);
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.stateOpen {
+  width: 25px;
+  margin-right: 6px;
+}
+
+.stateClose {
+  width: 17px;
+  margin-right: 6px;
+}
+
+.card-title {
+  display: flex;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+a {
+  color: var(--primary-link);
+}
+
+.User {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.card:hover {
+  background-color: rgba(1,1,1, 0.05);
+}
+
+.card {
+  border-radius: 0px !important;
+  
+}
+
+.top {
+  width: 100%;
+  border: solid 1px rgba(0,0,0, 0.1);
+  padding: 15px;
+}
+
+.dropdown-toggle {
+  background-color: transparent;
+  color: black;
+  border-style: none;
+}
+
+.dropdown-toggle:hover {
+  background-color: transparent;
+  color: black; 
+}
+
+.DropdownGrp {
+  display: flex;
+  justify-content: flex-end;
+} 
