@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Pagination } from "react-bootstrap";
 
 export default function PaginationPack(props) {
+  console.log("props issue", props.pageStatus)
   const nextValue = props.pageStatus
     ? props.pageStatus.filter(({ value }) => {
         return value === "rel=next";
