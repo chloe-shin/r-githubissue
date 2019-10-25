@@ -28,7 +28,6 @@ export default function PaginationPack(props) {
   const currPage = nextPage - 1;
   const baseUrl = lastValue[0] ? lastValue[0].link.split("&page=")[0] : null;
   let listPage = [];
-  console.log("last page", lastPage);
 
   if (lastPage) {
     for (let i = 1; i < lastPage; i++) {
@@ -53,7 +52,7 @@ export default function PaginationPack(props) {
         }}
       />
       {listPage.map(item => {
-        if (item >= currPage - 2 && item < currPage + 2)
+        if (item >= currPage - 4 && item < currPage + 4)
           return (
             <Pagination.Item
               active={item === currPage}

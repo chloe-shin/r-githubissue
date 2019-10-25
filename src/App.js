@@ -59,7 +59,6 @@ function App() {
       });
 
     setPageStatus(links);
-    console.log("links", links);
     setIssues(jsonData);
     setIsLoading(false);
   };
