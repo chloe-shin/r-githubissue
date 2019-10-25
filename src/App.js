@@ -5,6 +5,7 @@ import Repo from "./component/Repo";
 import Nav from "./component/Nav";
 import Issues from "./component/Issues";
 import Footer from "./component/Footer";
+import Localissues from "./issues"
 import { get } from "http";
 import { default as localIssues } from "./utils";
 import { closeissue, openissue } from "./utils";
@@ -26,8 +27,15 @@ function App() {
   const [closeIssues, setCloseIssues] = useState([]);
   const [currentIssue, setCurrentIssue] = useState({});
   const [comments, setComments] = useState([]);
+  const [currentUser, setCurrentUser] = useState();
   console.log(token);
 
+  const CurrentUser =async()=>{
+    const url = `https://api.github.com/user`
+    const response = await fetch(url);
+    const data = await response.json();
+    setCurrentUser(data);
+  }
   const getAPI = async tok => {
     const url = `https://api.github.com/repos/facebook/react/issues?access_token=${tok}&state=all`;
     const response = await fetch(url);
@@ -72,7 +80,6 @@ function App() {
     // console.log ('cloased issues', closeIssues)
     setCloseIssues(closeissue);
   };
-
   useEffect(() => {
     const existingToken = sessionStorage.getItem("token");
     const accessToken =
@@ -95,9 +102,8 @@ function App() {
 
     if (existingToken) {
       setToken(existingToken);
-
       getAPI(existingToken);
-
+      CurrentUser();
       getOpenIssues();
       getCloseIssues();
       console.log("exsistingtoken", existingToken);
@@ -137,11 +143,13 @@ function App() {
         </Form>
       </div>
       <Nav />
+
       <Repo
         closeIssues={closeIssues}
         openIssues={openIssues}
         issues={issues}
         setIssues={setIssues}
+        currentUser={currentUser}
       />
       {currentIssue ? (
         <Issues issue={localIssues[0]} comments={comments} />

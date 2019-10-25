@@ -1554,38 +1554,4 @@ const issues = [
     }
 ]
 
-export const comments = [
-    {
-        "url": "https://api.github.com/repos/facebook/react/issues/comments/545627810",
-        "html_url": "https://github.com/facebook/react/issues/17170#issuecomment-545627810",
-        "issue_url": "https://api.github.com/repos/facebook/react/issues/17170",
-        "id": 545627810,
-        "node_id": "MDEyOklzc3VlQ29tbWVudDU0NTYyNzgxMA==",
-        "user": {
-            "login": "aweary",
-            "id": 6886061,
-            "node_id": "MDQ6VXNlcjY4ODYwNjE=",
-            "avatar_url": "https://avatars2.githubusercontent.com/u/6886061?v=4",
-            "gravatar_id": "",
-            "url": "https://api.github.com/users/aweary",
-            "html_url": "https://github.com/aweary",
-            "followers_url": "https://api.github.com/users/aweary/followers",
-            "following_url": "https://api.github.com/users/aweary/following{/other_user}",
-            "gists_url": "https://api.github.com/users/aweary/gists{/gist_id}",
-            "starred_url": "https://api.github.com/users/aweary/starred{/owner}{/repo}",
-            "subscriptions_url": "https://api.github.com/users/aweary/subscriptions",
-            "organizations_url": "https://api.github.com/users/aweary/orgs",
-            "repos_url": "https://api.github.com/users/aweary/repos",
-            "events_url": "https://api.github.com/users/aweary/events{/privacy}",
-            "received_events_url": "https://api.github.com/users/aweary/received_events",
-            "type": "User",
-            "site_admin": false
-        },
-        "created_at": "2019-10-23T20:43:51Z",
-        "updated_at": "2019-10-23T20:43:51Z",
-        "author_association": "MEMBER",
-        "body": "Thanks for the report @jaydenseric, I was able to [reproduce without next.js as well](https://codesandbox.io/s/charming-glade-dkcon). Generally you should avoid mixing `props.children` and `dangerouslySetInnerHTML` but we should definitely avoid false positives when we can."
-    }
-]
-
 export default issues;
