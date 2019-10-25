@@ -1,9 +1,9 @@
-import React from 'react'
+import React from "react";
 import { Container, Row, Card, Button, Col } from "react-bootstrap";
 
 export default function Repo(props) {
-    return (
-        <Container>
+  return (
+    <Container>
       <Row>
         {props.issues.map(item => {
           return (
@@ -13,8 +13,7 @@ export default function Repo(props) {
                 <Card.Body>
                   <Card.Title>{item.title}</Card.Title>
                   <Card.Text>
-                    Some quick example text to build on the card title and make
-                    up the bulk of the card's content.
+                  {item.body}
                   </Card.Text>
                   <Button variant="primary">Go somewhere</Button>
                 </Card.Body>
@@ -24,5 +23,5 @@ export default function Repo(props) {
         })}
       </Row>
     </Container>
-    )
+  );
 }

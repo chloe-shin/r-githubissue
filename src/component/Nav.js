@@ -1,6 +1,7 @@
-import React from 'react'
+import { FormControl, Form, Button } from "react-bootstrap";
+import React, { useState } from "react";
 
-export default function Nav() {
+export default function Nav(props) {
     return (
         <div>
             

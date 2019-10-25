@@ -1,3 +1,27 @@
 .Card {
   width: 100%;
 }
+
+.search-button {
+  display: none;
+}
+
+.mr-sm-2 {
+  background-color: #fafbfc;
+  color: #586069;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.clear-search {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  /*input has OS specific font-family*/
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
+  text-decoration: none;
+}
