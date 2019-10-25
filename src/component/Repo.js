@@ -8,7 +8,7 @@ export default function Repo(props) {
 
     return (
 
-      <Container>
+      <Container Fluid>
       <Row>
       <Col lg={12}>
     
@@ -19,7 +19,7 @@ export default function Repo(props) {
      <a href = "#" onClick = {()=> props.setIssues (props.openIssues.items)}>
      <img className = "stateOpen" src = "img/open.svg"/>  
      {props.openIssues && props.openIssues.total_count} opened </a>
-     <a href = "#" onClick = {()=> props.setIssues (props.closeIssues.items)}><img className = "stateClose" src = "img/success.svg"/> 
+     <a href = "#" onClick = {()=> props.setIssues (props.closeIssues.items)}><img className = "stateClose2" src = "img/success.svg"/> 
      {props.closeIssues && props.closeIssues.total_count} closed </a>
      </Col>
      <Col lg= {8}>
@@ -83,7 +83,7 @@ export default function Repo(props) {
                   <div className ="User"> 
                     <img className = "avatar" src = {item.user.avatar_url}/> 
                     <a href = {item.user.html_url}> {item.user.login} </a>
-                    {item.comments}
+                    <div className = "comment-chloe"><i class="far fa-comment"></i>{item.comments}</div>
                   </div>
               </Col>
 
