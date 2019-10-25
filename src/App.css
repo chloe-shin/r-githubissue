@@ -1,3 +1,100 @@
+
+/* Hai Chung */
+:root {
+  --primary-border: #d1d5d9;
+  --primary-background: white;
+  --secondary-background: #e8eaec;
+  --primary-strong: #8e949a;
+}
+
+.App {
+  min-height: 100vh;
+  min-width: 100vw;
+  background-color: var(--primary-background);
+  font-size: 0.7rem;
+}
+
 .Card {
   width: 100%;
 }
+
+.outterContainer {
+  margin : 5rem 17rem;
+  background-color: var(--primary-background);
+  padding:0;
+}
+
+.outterContainer .rightCol {
+  width: 80rem;
+  padding: 0;
+}
+
+.outterContainer hr {
+  margin: 13px 0;
+}
+
+.outterContainer p, ul, li, span {
+  font-size: 0.7rem;
+}
+
+.outterContainer strong {
+  color: var(--primary-strong);
+}
+
+.outterContainer pre {
+  font-size: 0.6rem;
+  padding: 20px;
+  background-color: var(--secondary-background);
+  border-radius: 3px;
+}
+
+.discussionBox {
+  width: 60rem;
+  height: auto;
+  border-radius: 3px;
+  float:right;
+}
+
+.discussionHeader{
+  background-color: var(--secondary-background);
+  height: 30px;
+  padding: .8px 10px 0 13px;
+  border: solid 1.1px var(--primary-border);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.toTheRight {
+  margin-top: 2.8px;
+  float: right;
+  font-weight: normal;
+}
+
+.emoji {
+  font-size: .9rem;
+  margin-right: 3px;
+}
+
+.avatarIssue {
+  width: 35px;
+  height: 35px;
+  border-radius: 3px;
+}
+
+
+.discussionBody {
+
+  padding: 12px 13px;
+  border: solid 1.1px var(--primary-border);
+  border-top: none;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.singleDisscusion {
+  margin-bottom: 20px;
+  padding: 0;
+  width:100%;
+  /* width: 80rem; */
+}
+
