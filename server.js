@@ -4,7 +4,7 @@ require("dotenv").config();
 
 const clientId = process.env.REACT_APP_CLIENT_ID;
 const secretKey = process.env.REACT_APP_SECRET_KEY;
-console.log(clientId)
+console.log({ chloe: 'chloe', clientId, secretKey})
 console.log("started server on port 5000");
 
 http
