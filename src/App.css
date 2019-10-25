@@ -1,23 +1,77 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Montserrat&display=swap');
+
+
 .App {
-  /* text-align: center; */
-  margin-left: 10px;
+  font-family: 'Roboto', sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
+.Card {
+  width: 80%;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.avatar {
+  width: 40px;
+  border: 1px solid rgba(0,0,0, 0.1);
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.stateOpen {
+  width: 25px;
+  margin-right: 6px;
+}
+
+.stateClose {
+  width: 17px;
+  margin-right: 6px;
+}
+
+.card-title {
+  display: flex;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+a {
+  color: black;
+}
+
+
+.User {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  margin-top: 6px;
 }
 
-.App-link {
-  color: #09d3ac;
+.card:hover {
+  background-color: rgba(1,1,1, 0.05);
 }
+
+.card {
+  border-radius: 0px !important;
+  
+}
+
+.top {
+  width: 100%;
+  border: solid 1px rgba(0,0,0, 0.1);
+  padding: 15px;
+}
+
+.dropdown-toggle {
+  background-color: transparent;
+  color: black;
+  border-style: none;
+}
+
+.dropdown-toggle:hover {
+  background-color: transparent;
+  color: black; 
+}
+
+.DropdownGrp {
+  display: flex;
+  justify-content: flex-end;
+} 
