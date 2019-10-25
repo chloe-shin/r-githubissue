@@ -40,11 +40,17 @@ export default function PaginationPack(props) {
     <Pagination>
       <Pagination.First
         disabled={!firstValue}
-        onClick={() => firstValue && props.getAPI(firstValue.link)}
+        onClick={() => {
+          firstValue && props.getAPI(firstValue.link);
+          props.setIsLoading(true);
+        }}
       />
       <Pagination.Prev
         disabled={!preValue}
-        onClick={() => preValue && props.getAPI(preValue.link)}
+        onClick={() => {
+          preValue && props.getAPI(preValue.link);
+          props.setIsLoading(true);
+        }}
       />
       {listPage.map(item => {
         if (item >= currPage - 2 && item < currPage + 2)
@@ -53,6 +59,7 @@ export default function PaginationPack(props) {
               active={item === currPage}
               onClick={() => {
                 props.getAPI(baseUrl + `&page=${item}`);
+                props.setIsLoading(true);
               }}
             >
               {item}
@@ -62,15 +69,26 @@ export default function PaginationPack(props) {
       <Pagination.Ellipsis />
 
       <Pagination.Item
-      onClick={() => {
-        props.getAPI(baseUrl + `&page=${lastPage}`);
-      }}
-      >{lastPage && lastPage}</Pagination.Item>
+        onClick={() => {
+          props.getAPI(baseUrl + `&page=${lastPage}`);
+          props.setIsLoading(true);
+        }}
+      >
+        {lastPage && lastPage}
+      </Pagination.Item>
       <Pagination.Next
         disabled={!nextValue}
-        onClick={() => props.getAPI(nextValue[0].link)}
+        onClick={() => {
+          props.getAPI(nextValue[0].link);
+          props.setIsLoading(true);
+        }}
       />
-      <Pagination.Last onClick={() => props.getAPI(lastValue[0].link)} />
+      <Pagination.Last
+        onClick={() => {
+          props.getAPI(lastValue[0].link);
+          props.setIsLoading(true);
+        }}
+      />
     </Pagination>
   );
 }

@@ -4,9 +4,17 @@ import "./App.css";
 import Repo from "./component/Repo";
 import Nav from "./component/Nav";
 import Footer from "./component/Footer";
+import RingLoader from "react-spinners/RingLoader";
 import { get } from "http";
 import Issues from "./component/Issues";
 import PaginationPack from "./component/Pagination";
+
+// Can be a string as well. Need to ensure each key-value pair ends with ;
+const override = `css
+  display: block;
+  margin: 0 auto;
+  border-color: rgb(54, 215, 183);
+`;
 
 // require("dotenv").config({path: '.env'});
 const clientId = process.env.REACT_APP_CLIENT_ID;
@@ -15,6 +23,7 @@ function App() {
   const [token, setToken] = useState(null);
   const [issues, setIssues] = useState([]);
   const [pageStatus, setPageStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getAPI = async (
     url = `https://api.github.com/repos/facebook/react/issues?access_token=73098386f1f5fbd159b090711b39ab2889842362&state=all`
@@ -52,6 +61,7 @@ function App() {
     setPageStatus(links);
     console.log("links", links);
     setIssues(jsonData);
+    setIsLoading(false);
   };
   // console.log(issues);
   useEffect(() => {
@@ -82,12 +92,26 @@ function App() {
   return (
     <>
       <Nav />
-      <Repo issues={issues} />
+      {isLoading ? (
+        <div className="sweet-loading">
+          <RingLoader
+            css={override}
+            sizeUnit={"px"}
+            size={150}
+            color={"rgb(54, 215, 183)"}
+            loading={isLoading}
+          />
+        </div>
+      ) : (
+        <Repo issues={issues} />
+      )}
       <PaginationPack
         pageStatus={pageStatus && pageStatus}
         setIssues={setIssues}
         getAPI={getAPI}
+        setIsLoading={setIsLoading}
       />
+      )}
       {/* <Issues issues={issues} id={510496674} /> */}
       <Footer />
     </>
