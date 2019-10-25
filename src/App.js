@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
 import "./App.css";
+
 import Repo from "./component/Repo";
 import Nav from "./component/Nav";
+import Issues from "./component/Issues";
 import Footer from "./component/Footer";
 import { get } from "http";
-import {
-  Container,
-  Row,
-  Card,
-  Button,
-  Col,
-  FormControl,
-  Form
-} from "react-bootstrap";
-import { default as localIssues } from "./utils/localIssues";
+import { default as localIssues } from "./utils";
+import { closeissue, openissue } from "./utils";
+import { comments as localComments } from "./utils";
+import { Form, FormControl, Button } from "react-bootstrap";
+
+// let markdown = '';
 
 // require("dotenv").config({path: '.env'});
 const clientId = process.env.REACT_APP_CLIENT_ID;
@@ -25,6 +22,10 @@ function App() {
   const [issues, setIssues] = useState([]);
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
+  const [openIssues, setOpenIssues] = useState([]);
+  const [closeIssues, setCloseIssues] = useState([]);
+  const [currentIssue, setCurrentIssue] = useState({});
+  const [comments, setComments] = useState([]);
   console.log(token);
 
   const getAPI = async tok => {
@@ -32,6 +33,7 @@ function App() {
     const response = await fetch(url);
     const jsonData = await response.json();
     setIssues(jsonData);
+    setCurrentIssue(localIssues);
   };
 
   const searchIssues = async event => {
@@ -44,12 +46,40 @@ function App() {
   };
 
   // console.log(issues);
+
+  //function to get all the comments of the current Issue from api
+  const getComments = async number => {
+    // const response = await fetch(`https://api.github.com/repos/facebook/react/issues/${number}/comments`);
+    // const data = await response.json();
+    // data && setComments([...comments],data);
+    localComments && setComments(localComments);
+  };
+
+  const getOpenIssues = async () => {
+    // const url = `https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:open&per_page=20`;
+    // const response = await fetch(url);
+    // const openData = await response.json();
+    // setOpenIssues(openData);
+    // console.log ('open issues', openIssues)
+    setOpenIssues(openissue);
+  };
+
+  const getCloseIssues = async () => {
+    // const url = `https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:closed&per_page=20`;
+    // const response = await fetch(url);
+    // const closeData = await response.json();
+    // setCloseIssues(closeData);
+    // console.log ('cloased issues', closeIssues)
+    setCloseIssues(closeissue);
+  };
+
   useEffect(() => {
     const existingToken = sessionStorage.getItem("token");
     const accessToken =
       window.location.search.split("=")[0] === "?access_token"
         ? window.location.search.split("=")[1]
         : null;
+    getAPI();
 
     if (!accessToken && !existingToken) {
       window.location.replace(
@@ -59,14 +89,24 @@ function App() {
 
     if (accessToken) {
       console.log(`New accessToken: ${accessToken}`);
-
+      setToken(accessToken);
       sessionStorage.setItem("token", accessToken);
     }
 
     if (existingToken) {
       setToken(existingToken);
+
       getAPI(existingToken);
+
+      getOpenIssues();
+      getCloseIssues();
+      console.log("exsistingtoken", existingToken);
     }
+  }, []);
+
+  // get comments content each time a currentIssue is set
+  useEffect(() => {
+    getComments(currentIssue.number);
   }, []);
 
   return (
@@ -90,12 +130,24 @@ function App() {
             Submit
           </Button>
           {isClear && (
-            <button onClick={() => getAPI()} className="clear-search">Clear current search query, filters, and sorts</button>
+            <button onClick={() => getAPI()} className="clear-search">
+              Clear current search query, filters, and sorts
+            </button>
           )}
         </Form>
       </div>
       <Nav />
-      <Repo issues={issues} />;
+      <Repo
+        closeIssues={closeIssues}
+        openIssues={openIssues}
+        issues={issues}
+        setIssues={setIssues}
+      />
+      {currentIssue ? (
+        <Issues issue={localIssues[0]} comments={comments} />
+      ) : (
+        <p>No Issue</p>
+      )}
       <Footer />
     </>
   );
