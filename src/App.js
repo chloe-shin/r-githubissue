@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import Repo from './component/Repo';
 import Nav from './component/Nav'
 import Footer from './component/Footer'
-import { get } from "http";
+import Localissues from "./issues"
 
 // require("dotenv").config({path: '.env'});
 const clientId = process.env.REACT_APP_CLIENT_ID;
@@ -15,13 +14,13 @@ function App() {
 
   const getAPI = async () => {
     
-    const url = `https://api.github.com/repos/facebook/react/issues?per_page=20`;
-    const response = await fetch(url);
+    // const url = `https://api.github.com/repos/facebook/react/issues?per_page=20`;
+    // const response = await fetch(url);
 
-    const jsonData = await response.json();
+    // const jsonData = await response.json();
 
-    console.table(jsonData);
-    setIssues(jsonData);
+    // console.table(jsonData);
+    setIssues(Localissues);
   };
   // console.log(issues);
   useEffect(() => {
