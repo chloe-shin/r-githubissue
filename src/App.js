@@ -1,26 +1,32 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-
 import Repo from "./component/Repo";
 import Nav from "./component/Nav";
-import Issues from "./component/Issues";
 import Footer from "./component/Footer";
-import Localissues from "./issues"
+import RingLoader from "react-spinners/RingLoader";
 import { get } from "http";
+import Issues from "./component/Issues";
+import PaginationPack from "./component/Pagination";
 import { default as localIssues } from "./utils";
 import { closeissue, openissue } from "./utils";
 import { comments as localComments } from "./utils";
 import { Form, FormControl, Button } from "react-bootstrap";
 
-// let markdown = '';
+// Can be a string as well. Need to ensure each key-value pair ends with ;
+const override = `css
+  display: block;
+  margin: 0 auto;
+  border-color: rgb(54, 215, 183);
+`;
 
 // require("dotenv").config({path: '.env'});
 const clientId = process.env.REACT_APP_CLIENT_ID;
-console.log("id", clientId);
-
+// console.log("id", clientId);
 function App() {
   const [token, setToken] = useState(null);
   const [issues, setIssues] = useState([]);
+  const [pageStatus, setPageStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
   const [openIssues, setOpenIssues] = useState([]);
@@ -28,29 +34,83 @@ function App() {
   const [currentIssue, setCurrentIssue] = useState({});
   const [comments, setComments] = useState([]);
   const [currentUser, setCurrentUser] = useState();
-  console.log(token);
 
-  const CurrentUser =async()=>{
-    const url = `https://api.github.com/user`
+  const CurrentUser = async () => {
+    const url = `https://api.github.com/user`;
     const response = await fetch(url);
     const data = await response.json();
     setCurrentUser(data);
-  }
-  const getAPI = async tok => {
-    const url = `https://api.github.com/repos/facebook/react/issues?access_token=${tok}&state=all`;
-    const response = await fetch(url);
+  };
+
+  const getAPI = async (
+    url = `https://api.github.com/repos/facebook/react/issues?access_token=73098386f1f5fbd159b090711b39ab2889842362&state=all&per_page=10`
+  ) => {
+    const headers = {
+      Accept: "application / vnd.github.v3 + json"
+    };
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers
+    });
+
     const jsonData = await response.json();
+    // const urls = response.headers.get("link").split(",").map(item=>item.split(";")[0].replace("<","").replace(">",""));
+    // console.log(urls)
+
+    const links = response.headers
+      .get("link")
+      .split(",")
+      .map(url => {
+        return {
+          link: url
+            .split(";")[0]
+            .replace("<", "")
+            .replace(">", ""),
+          value: url
+            .split(";")[1]
+            .trim()
+            .replace('"', "")
+            .replace('"', "")
+        };
+      });
+
+    setPageStatus(links);
     setIssues(jsonData);
-    setCurrentIssue(localIssues);
+    setIsLoading(false);
   };
 
   const searchIssues = async event => {
+    const headers = {
+      Accept: "application / vnd.github.v3 + json"
+    };
     event && event.preventDefault();
     const url = `https://api.github.com/search/issues?q=${query}?sort=created&order=desc?per_page=20`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers
+    });
     const data = await response.json();
     setIssues(data.items);
-    console.log("url", url);
+
+    const links = response.headers
+      .get("link")
+      .split(",")
+      .map(url => {
+        return {
+          link: url
+            .split(";")[0]
+            .replace("<", "")
+            .replace(">", ""),
+          value: url
+            .split(";")[1]
+            .trim()
+            .replace('"', "")
+            .replace('"', "")
+        };
+      });
+
+    setPageStatus(links);
   };
 
   // console.log(issues);
@@ -114,7 +174,7 @@ function App() {
   useEffect(() => {
     getComments(currentIssue.number);
   }, []);
-
+console.log("pageStatus", pageStatus)
   return (
     <>
       <div>
@@ -143,14 +203,33 @@ function App() {
         </Form>
       </div>
       <Nav />
-
-      <Repo
-        closeIssues={closeIssues}
-        openIssues={openIssues}
-        issues={issues}
+      {isLoading ? (
+        <div className="sweet-loading">
+          <RingLoader
+            css={override}
+            sizeUnit={"px"}
+            size={150}
+            color={"rgb(54, 215, 183)"}
+            loading={isLoading}
+          />
+        </div>
+      ) : (
+        <Repo
+          closeIssues={closeIssues}
+          openIssues={openIssues}
+          issues={issues}
+          setIssues={setIssues}
+          currentUser={currentUser}
+        />
+      )}
+      <PaginationPack
+        pageStatus={pageStatus && pageStatus}
         setIssues={setIssues}
-        currentUser={currentUser}
+        getAPI={getAPI}
+        setIsLoading={setIsLoading}
       />
+      )}
+      {/* <Issues issues={issues} id={510496674} /> */}
       {currentIssue ? (
         <Issues issue={localIssues[0]} comments={comments} />
       ) : (

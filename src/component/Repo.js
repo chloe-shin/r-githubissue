@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Container, Row, Card, Button, Col, Dropdown, DropdownButton } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Card,
+  Button,
+  Col,
+  Dropdown,
+  DropdownButton
+} from "react-bootstrap";
 import Modal from "react-modal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ReactMarkdown from "react-markdown";
@@ -17,7 +25,11 @@ export default function Repo(props) {
   };
   return (
     <Container>
-      <button className="btn btn-primary" onClick={() => setIsOpen(true)}>New issue</button>
+      <div>
+        <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
+          New issue
+        </button>
+      </div>
       <Row>
         <Col lg={12}>
           <div className="top">
@@ -156,7 +168,11 @@ export default function Repo(props) {
         <div className="col-md-9 col-sm-12">
           <div className="composer new-comment">
             <span className="comment-avatar">
-              <a className="d-inline-block" href={props.html_user} target="_blank">
+              <a
+                className="d-inline-block"
+                href={props.html_user}
+                target="_blank"
+              >
                 <img className="avatar" src={props.avatar_url} alt="avata" />
               </a>
             </span>
