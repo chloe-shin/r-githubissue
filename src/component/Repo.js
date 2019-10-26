@@ -6,13 +6,18 @@ import {
   Button,
   Col,
   Dropdown,
-  DropdownButton
+  DropdownButton,
+  OverlayTrigger,
+  Popover
 } from "react-bootstrap";
 import Modal from "react-modal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ReactMarkdown from "react-markdown";
 import { Tab, Tabs } from "react-bootstrap";
 import moment from "moment";
+import LabelsDisplay from './LabelsDisplay';
+
+
 export default function Repo(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [key, setKey] = useState("write");
@@ -23,6 +28,20 @@ export default function Repo(props) {
     setIsOpen(false);
     console.log(queryText);
   };
+
+
+  const popover =
+    <Popover id="popover-basic">
+      <Popover.Title as="h3">  </Popover.Title>
+      <Popover.Content>
+        And here's some <strong>amazing</strong> content. It's very engaging.
+        right?
+      </Popover.Content>
+    </Popover>
+
+    ;
+
+
   return (
     <Container>
       <div>
@@ -30,12 +49,13 @@ export default function Repo(props) {
           New issue
         </button>
       </div>
-      <Row>
+      <Row> 
         <Col lg={12}>
           <div className="top">
             <Container>
               <Row>
-                <Col lg={4}>
+                <Col lg={4} className="totalcount">
+
                   <a
                     href="#"
                     onClick={() => props.setIssues(props.openIssues.items)}
@@ -44,11 +64,12 @@ export default function Repo(props) {
                     {props.openIssues &&
                       props.openIssues.total_count} opened{" "}
                   </a>
+
                   <a
                     href="#"
                     onClick={() => props.setIssues(props.closeIssues.items)}
                   >
-                    <img className="stateClose" src="img/success.svg" />
+                    <img className="stateClose2" src="img/success.svg" />
                     {props.closeIssues &&
                       props.closeIssues.total_count} closed{" "}
                   </a>
@@ -110,6 +131,7 @@ export default function Repo(props) {
       <Row>
         {props.issues &&
           props.issues.map(item => {
+            console.log('issue, listen to charles',item);
             return (
               <Col lg={12}>
                 <Card>
@@ -121,28 +143,40 @@ export default function Repo(props) {
                             {item.state === "open" ? (
                               <img className="stateOpen" src="img/open.svg" />
                             ) : (
-                              <img
-                                className="stateClose"
-                                src="img/success.svg"
-                              />
-                            )}{" "}
+                                <img
+                                  className="stateClose"
+                                  src="img/success.svg"
+                                />
+                              )}{" "}
                             <br />
                           </div>
                           <a href="#">
                             {" "}
                             {item.title} <br />{" "}
-                          </a>
+                          </a> <br/>
+                          <LabelsDisplay labels={item.labels}/>
                         </Card.Title>
-                        <Card.Text>
-                          <div className="Update">
+                        <Card.Text>                 
                             #{item.number} {item.state}{" "}
                             {moment(item.updated_at)
                               .startOf("day")
                               .fromNow()}{" "}
                             by
-                            <a href={item.user.html_url}> {item.user.login} </a>
+                            <OverlayTrigger trigger="hover" placement="right" overlay=
+                              {
+                                <Popover id="popover-basic">
+                                  <Popover.Title as="h3"> 
+                                    <img className = "popOverimg" src={item.user.avatar_url} />
+                                    <strong>{item.user.login}</strong>
+                                  </Popover.Title>
+                                  <Popover.Content>
+                                  </Popover.Content>
+                                </Popover>
+                              }>
+                              <a href={item.user.html_url}> {item.user.login} </a>
+                            </OverlayTrigger>
                             <br />
-                          </div>
+                            
                         </Card.Text>
                       </Card.Body>
                     </Col>
@@ -150,8 +184,22 @@ export default function Repo(props) {
                     <Col lg={2}>
                       <div className="User">
                         <img className="avatar" src={item.user.avatar_url} />
-                        <a href={item.user.html_url}> {item.user.login} </a>
-                        {item.comments}
+                        <OverlayTrigger trigger="hover" placement="left" overlay={
+                          <Popover id="popover-basic">
+                              <Popover.Title as="h3"> 
+                                <img className = "popOverimg" src={item.user.avatar_url} />
+                                <strong>{item.user.login}</strong>
+                              </Popover.Title>
+                              <Popover.Content>
+                                {item.user.site_admin} 
+                                
+                              </Popover.Content>
+                          </Popover>
+                        }>
+                          <a href={item.user.html_url}> {item.user.login} </a>
+                        </OverlayTrigger>
+
+                        <div className="comment-chloe"><i class="fas fa-comment"></i>{item.comments}</div>
                       </div>
                     </Col>
                   </Row>
@@ -160,6 +208,7 @@ export default function Repo(props) {
             );
           })}
       </Row>
+      
       <Modal
         className="popupIssues"
         isOpen={isOpen}
@@ -168,6 +217,7 @@ export default function Repo(props) {
         <div className="col-md-9 col-sm-12">
           <div className="composer new-comment">
             <span className="comment-avatar">
+
               <a
                 className="d-inline-block"
                 href={props.html_user}

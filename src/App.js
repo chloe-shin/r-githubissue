@@ -42,8 +42,27 @@ function App() {
     setCurrentUser(data);
   };
 
+  // const postIssue = async (owner, repo, title, body) => {
+  //   const url = `https://api.github.com/repos/${owner}/${repo}/issues`;
+  //   const headers = {
+  //     Accept: "application / vnd.github.v3 + json"
+  //   };
+  //   const response = await fetch(url, {
+  //     method: "POST",
+  //     headers: headers,
+  //     body: {
+  //       title: title,
+  //       body: body
+  //     }
+  //   });
+  // }
+  // // postIssue("chloe-shin", "tictactoe", "my issue title", "my issue body");
+ 
+  
+
+
   const getAPI = async (
-    url = `https://api.github.com/repos/facebook/react/issues?access_token=73098386f1f5fbd159b090711b39ab2889842362&state=all&per_page=10`
+    url = `https://api.github.com/repos/facebook/react/issues?access_token=${sessionStorage.getItem('token')}&scope&state=all&per_page=10`
   ) => {
     const headers = {
       Accept: "application / vnd.github.v3 + json"
@@ -162,7 +181,7 @@ function App() {
 
     if (existingToken) {
       setToken(existingToken);
-      getAPI(existingToken);
+      getAPI();
       CurrentUser();
       getOpenIssues();
       getCloseIssues();
@@ -174,9 +193,9 @@ function App() {
   useEffect(() => {
     getComments(currentIssue.number);
   }, []);
-console.log("pageStatus", pageStatus)
+  console.log("pageStatus", pageStatus)
   return (
-    <>
+    <div className="App">
       <div>
         <Form
           inline
@@ -214,14 +233,18 @@ console.log("pageStatus", pageStatus)
           />
         </div>
       ) : (
-        <Repo
-          closeIssues={closeIssues}
-          openIssues={openIssues}
-          issues={issues}
-          setIssues={setIssues}
-          currentUser={currentUser}
-        />
-      )}
+          <Repo
+            query={query}
+            closeIssues={closeIssues}
+            openIssues={openIssues}
+            issues={issues}
+            setIssues={setIssues}
+            currentUser={currentUser}
+            // label={label}
+            // getLabel={getLabel}
+            
+          />
+        )}
       <PaginationPack
         pageStatus={pageStatus && pageStatus}
         setIssues={setIssues}
@@ -233,10 +256,10 @@ console.log("pageStatus", pageStatus)
       {currentIssue ? (
         <Issues issue={localIssues[0]} comments={comments} />
       ) : (
-        <p>No Issue</p>
-      )}
+          <p>No Issue</p>
+        )}
       <Footer />
-    </>
+    </div>
   );
 }
 
