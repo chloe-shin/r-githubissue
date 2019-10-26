@@ -5,25 +5,26 @@ import { Row, Col, Button } from "react-bootstrap";
 
 export default function Issues(props) {
   let { issue, comments } = props;
-  const [dataComment, setDataComment] =useState("");
+  const [dataComment, setDataComment] = useState("");
   // console.log("within Issue.js:", issue, "and the comment is: ", comments);
   console.log("issue", props.token);
   const url = `https://api.github.com/repos/nakasaky55/fake-imdb/issues/1/comments`;
   const headers = {
     "User-Agent": "Mozilla/5.0",
+    Authorization: `token ${props.token && props.token.split("&")[0]}`,
     "Content-type": "application/json",
-    Accept: "application/vnd.github+json",
-    Authorization: `token ${props.token && props.token.split("&")[0]}`
+    Accept: "application/vnd.github+json"
   };
-  const postComment = async (comment) => {
+  const postComment = async comment => {
     const body = {
       value: "hahahahaha"
     };
     const post = await fetch(url, {
       method: "POST",
       headers: headers,
-      
-      body: `${comment}`
+      body: JSON.stringify({
+        body: comment
+      })
     });
   };
   return (
@@ -103,7 +104,9 @@ export default function Issues(props) {
                 className="avatarIssue"
                 alt={`${issue.user.login}'s avatar`}
               />
-              <textarea onChange={e => setDataComment(e.target.value)}></textarea>
+              <textarea
+                onChange={e => setDataComment(e.target.value)}
+              ></textarea>
               <Button onClick={() => postComment(dataComment)}>Post </Button>
             </Col>
           </Row>

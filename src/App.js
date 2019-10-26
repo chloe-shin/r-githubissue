@@ -169,8 +169,8 @@ function App() {
     if (accessToken) {
       console.log(`New accessToken: ${accessToken}`);
       setToken(accessToken.split("&")[0]);
+      sessionStorage.setItem("token", accessToken);
     }
-    sessionStorage.setItem("token", accessToken);
 
     if (existingToken) {
       setToken(existingToken.split("&")[0]);
