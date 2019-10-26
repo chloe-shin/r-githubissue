@@ -4,12 +4,17 @@ import Repo from "./component/Repo";
 import Nav from "./component/Nav";
 import Footer from "./component/Footer";
 import RingLoader from "react-spinners/RingLoader";
-import { get } from "http";
+// import { get } from "http";
 import Issues from "./component/Issues";
 import PaginationPack from "./component/Pagination";
 import { default as localIssues } from "./utils";
 import { closeissue, openissue } from "./utils";
-import { comments as localComments } from "./utils";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  useParams
+} from "react-router-dom";
 
 // Can be a string as well. Need to ensure each key-value pair ends with ;
 const override = `css
@@ -27,23 +32,26 @@ function App() {
   const [pageStatus, setPageStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
+  const [isClear, setIsClear] = useState(false);
   const [openIssues, setOpenIssues] = useState([]);
   const [closeIssues, setCloseIssues] = useState([]);
-  const [currentIssue, setCurrentIssue] = useState({});
   const [comments, setComments] = useState([]);
   const [currentUser, setCurrentUser] = useState();
-  const [isClear, setIsClear] = useState(false);
+  const [currentOwner, setCurrentOwner] = useState("facebook");
+  const [currentRepo, setCurrentRepo] = useState("react");
+  const [issueNumber, setIssueNumber] = useState(null);
 
-  const CurrentUser = async () => {
-    const url = `https://api.github.com/user`;
+  const CurrentUser = async passedToken => {
+    const url = `https://api.github.com/user?access_token=${passedToken}`;
     const response = await fetch(url);
     const data = await response.json();
     setCurrentUser(data);
   };
 
-  const getAPI = async (
-    url = `https://api.github.com/repos/facebook/react/issues?access_token=73098386f1f5fbd159b090711b39ab2889842362&state=all&per_page=10`
-  ) => {
+  //this get called from line 167
+  const getAPI = async existingToken => {
+    //Hai- made url a varible and insert existingToken as a dynamic varible
+    const url = `https://api.github.com/repos/facebook/react/issues?access_token=${existingToken}&state=all&per_page=20`;
     const headers = {
       Accept: "application / vnd.github.v3 + json"
     };
@@ -57,24 +65,24 @@ function App() {
     // const urls = response.headers.get("link").split(",").map(item=>item.split(";")[0].replace("<","").replace(">",""));
     // console.log(urls)
 
-    // const links = response.headers
-    //   .get("link")
-    //   .split(",")
-    //   .map(url => {
-    //     return {
-    //       link: url
-    //         .split(";")[0]
-    //         .replace("<", "")
-    //         .replace(">", ""),
-    //       value: url
-    //         .split(";")[1]
-    //         .trim()
-    //         .replace('"', "")
-    //         .replace('"', "")
-    //     };
-    //   });
+    const links = response.headers
+      .get("link")
+      .split(",")
+      .map(url => {
+        return {
+          link: url
+            .split(";")[0]
+            .replace("<", "")
+            .replace(">", ""),
+          value: url
+            .split(";")[1]
+            .trim()
+            .replace('"', "")
+            .replace('"', "")
+        };
+      });
 
-    // setPageStatus(links);
+    setPageStatus(links);
     setIssues(jsonData);
     setIsLoading(false);
   };
@@ -112,15 +120,18 @@ function App() {
     setPageStatus(links);
   };
 
-  // console.log(issues);
-
-  //function to get all the comments of the current Issue from api
+  // function to get all the comments of the current Issue from api
   const getComments = async number => {
-    // const response = await fetch(`https://api.github.com/repos/facebook/react/issues/${number}/comments`);
-    // const data = await response.json();
-    // data && setComments([...comments],data);
-    localComments && setComments(localComments);
-  };
+    if (number && token) {
+      const response = await fetch(
+        `https://api.github.com/repos/facebook/react/issues/${number}/comments?access_token=${token}`
+      );
+      const data = await response.json();
+      setComments(data);
+      console.log("comments data", data);
+      return data;
+    } else console.log("there is no number passed in to getComments");
+  }; //Hai - start using api
 
   const getOpenIssues = async () => {
     // const url = `https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:open&per_page=20`;
@@ -139,13 +150,13 @@ function App() {
     // console.log ('cloased issues', closeIssues)
     setCloseIssues(closeissue);
   };
+
   useEffect(() => {
     const existingToken = sessionStorage.getItem("token");
     const accessToken =
       window.location.search.split("=")[0] === "?access_token"
         ? window.location.search.split("=")[1]
         : null;
-    getAPI();
 
     if (!accessToken && !existingToken) {
       window.location.replace(
@@ -154,69 +165,98 @@ function App() {
     }
 
     if (accessToken) {
-      console.log(`New accessToken: ${accessToken}`);
+      // console.log(`New accessToken: ${accessToken}`);
       setToken(accessToken);
       sessionStorage.setItem("token", accessToken);
+      getAPI(accessToken);
+      CurrentUser(accessToken);
     }
 
     if (existingToken) {
       setToken(existingToken);
       getAPI(existingToken);
-      CurrentUser();
+      CurrentUser(existingToken);
       getOpenIssues();
       getCloseIssues();
       console.log("exsistingtoken", existingToken);
     }
   }, []);
 
-  // get comments content each time a currentIssue is set
   useEffect(() => {
-    getComments(currentIssue.number);
-  }, []);
-  console.log("pageStatus", pageStatus);
+    //   getComments(currentIssue.number);
+    // }, []);
+    // console.log("pageStatus", pageStatus);
+    console.log("running useEffect");
+    getComments(issueNumber);
+  }, [issueNumber]);
+
+  // console.log('token state:', token)
+  // console.log("pageStatus", pageStatus)
   return (
-    <>
-      <Nav />
-      {isLoading ? (
-        <div className="sweet-loading">
-          <RingLoader
-            css={override}
-            sizeUnit={"px"}
-            size={150}
-            color={"rgb(54, 215, 183)"}
-            loading={isLoading}
+    <Router>
+      {/* Search for issues (within Repo.js) */}
+      <Nav currentOwner={currentOwner} currentRepo={currentRepo} />
+      <Switch>
+        <Route path="/" exact>
+          <div>
+            <h1>HOME PAGE</h1>
+          </div>
+        </Route>
+        <Route exact path={`/:owner/:repo/issues`} exact>
+          {isLoading ? (
+            <div className="sweet-loading">
+              <RingLoader
+                css={override}
+                sizeUnit={"px"}
+                size={150}
+                color={"rgb(54, 215, 183)"}
+                loading={isLoading}
+              />
+            </div>
+          ) : (
+            <Repo
+              query={query}
+              closeIssues={closeIssues}
+              openIssues={openIssues}
+              issues={issues}
+              setIssues={setIssues}
+              currentUser={currentUser}
+              // label={label}
+              // getLabel={getLabel}
+              currentOwner={currentOwner}
+              currentRepo={currentRepo}
+              setQuery={setQuery}
+              getAPI={getAPI}
+              isClear={isClear}
+              setIsClear={setIsClear}
+            />
+          )}
+          <PaginationPack
+            pageStatus={pageStatus && pageStatus}
+            setIssues={setIssues}
+            getAPI={getAPI}
+            setIsLoading={setIsLoading}
           />
-        </div>
-      ) : (
-        <Repo
-          closeIssues={closeIssues}
-          openIssues={openIssues}
-          issues={issues}
-          setIssues={setIssues}
-          currentUser={currentUser}
-          searchIssues={searchIssues}
-          setQuery={setQuery}
-          query={query}
-          getAPI={getAPI}
-          isClear={isClear}
-          setIsClear={setIsClear}
+          )}
+        </Route>
+        <Route
+          exact
+          path={`/:owner/:repo/issues/:number`}
+          children={
+            <Issues
+              issues={issues}
+              comments={comments}
+              setIssueNumber={setIssueNumber}
+              currentUser={currentUser}
+            />
+          }
         />
-      )}
-      <PaginationPack
-        pageStatus={pageStatus && pageStatus}
-        setIssues={setIssues}
-        getAPI={getAPI}
-        setIsLoading={setIsLoading}
-      />
-      )}
-      {/* <Issues issues={issues} id={510496674} /> */}
-      {currentIssue ? (
-        <Issues issue={localIssues[0]} comments={comments} />
-      ) : (
-        <p>No Issue</p>
-      )}
+        <Route path="/">
+          <div>404</div>
+        </Route>
+      </Switch>
       <Footer />
-    </>
+    </Router>
   );
 }
 
