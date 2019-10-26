@@ -97,3 +97,12 @@ Describe any challenges encountered while building the app.
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
+## Hai Chung - Saturday works :
+### App.js:
+* changed url to a const varible within getAPI
+* using dynamic varible in url string (existingToken)
+* using api to get comments
+* imported React Router components
+* insert Router, Switch, Route to return part of App.js
+* added 2 states : currentOwner (the owner of the current opened repo) and currentRepo (the repo is being opened) these values are set by the search bar at the landingpage or navbar
