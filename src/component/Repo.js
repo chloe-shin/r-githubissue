@@ -16,6 +16,7 @@ import ReactMarkdown from "react-markdown";
 import { Tab, Tabs } from "react-bootstrap";
 import moment from "moment";
 import LabelsDisplay from './LabelsDisplay';
+import {Link} from 'react-router-dom';
 
 
 export default function Repo(props) {
