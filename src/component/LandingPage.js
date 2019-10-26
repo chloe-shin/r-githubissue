@@ -1,37 +1,53 @@
-import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import React, {useState} from "react";
+import { Container, Row, Col, Button } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCoffee } from "@fortawesome/free-solid-svg-icons";
+import moment from "moment";
+import PaginationPack from "./Pagination";
 
 export default function LandingPage(props) {
-//   console.log("landing", props.landingData.items && props.landingData.items[0]);
+  const [query, setQuery] = useState("")
+  // console.log("landing", props.landingData.items && props.landingData.items);
+
   return (
     <Container fluid="true" className="landing-page">
       <Row>
-        <Col className="landing-left-side" lg={6}>
+        <Col className="landing-right-side" lg={12}>
+          <h3>Find your destination</h3>
+          <input 
+          onChange={event => setQuery(event.target.value)}
+          placeholder="Enter your curious"></input>
+          <Button className="landing-button" onClick={() => props.searchRepo(query, props.token)}>Find</Button>
+        </Col>
+        <Col className="landing-left-side" lg={12}>
           <h2>Top repo has more than 100000 stars.</h2>
           <Row>
-            <Col lg={12}>
-              <h3>
-                {props.landingData.items &&
-                  props.landingData.items[0].full_name}
-              </h3>
-              <div>
-                <p>
-                  {props.landingData.items &&
-                    props.landingData.items[0].stargazers_count}
-                </p>
-                <p>
-                  {props.landingData.items &&
-                    props.landingData.items[0].language}
-                </p>
-                <p>
-                  {props.landingData.items &&
-                    props.landingData.items[0].updated_at}
-                </p>
-              </div>
-            </Col>
+            {props.landingData.items &&
+              props.landingData.items.map(item => {
+                return (
+                  <Col lg={6}>
+                    <div className="item-repo">
+                      <h3>{item && item.full_name}</h3>
+                      <div className="top-repo-display">
+                        <p>
+                          {item && item.stargazers_count}{" "}
+                          <i className="far fa-star"></i>
+                        </p>
+                        <p>{item && item.language}</p>
+                        <p>
+                          Created {item && moment(item.created_at).fromNow()}
+                        </p>
+                        <p>
+                          Updated on {item && moment(item.updated_at).fromNow()}
+                        </p>
+                      </div>
+                    </div>
+                  </Col>
+                );
+              })}
           </Row>
         </Col>
-        <Col className="landing-right-side" lg={6}></Col>
+        <PaginationPack/>
       </Row>
     </Container>
   );

@@ -46,8 +46,8 @@ function App() {
     setCurrentUser(data);
   };
 
-  const getAPI = async (est) => {
-    const url = `https://api.github.com/repos/facebook/react/issues?access_token=${est}&state=all&per_page=10`
+  const getAPI = async est => {
+    const url = `https://api.github.com/repos/facebook/react/issues?access_token=${est}&state=all&per_page=10`;
     const headers = {
       Accept: "application / vnd.github.v3 + json"
     };
@@ -116,6 +116,37 @@ function App() {
     setPageStatus(links);
   };
 
+  const searchRepo = async (q, tok) => {
+    const headers = {
+      Accept: "application / vnd.github.v3 + json"
+    };
+    const url = `https://api.github.com/search/repositories?q=${q}&access_token=${tok}`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers
+    });
+    const result = await response.json();
+    setLandingData(result);
+    const links = response.headers
+      .get("link")
+      .split(",")
+      .map(url => {
+        return {
+          link: url
+            .split(";")[0]
+            .replace("<", "")
+            .replace(">", ""),
+          value: url
+            .split(";")[1]
+            .trim()
+            .replace('"', "")
+            .replace('"', "")
+        };
+      });
+
+    setPageStatus(links);
+  };
+
   console.log("token", token);
 
   //function to get all the comments of the current Issue from api
@@ -144,8 +175,8 @@ function App() {
     setCloseIssues(closeissue);
   };
 
-  const getLandingRepo = async () => {
-    const url = `https://api.github.com/search/repositories?q=stars:>=100000&fork:false?access_token=${token}`;
+  const getLandingRepo = async tok => {
+    const url = `https://api.github.com/search/repositories?q=stars:>=100000&fork:false?access_token=${tok}`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -158,7 +189,7 @@ function App() {
       window.location.search.split("=")[0] === "?access_token"
         ? window.location.search.split("=")[1]
         : null;
-    // getAPI();  
+    // getAPI();
 
     if (!accessToken && !existingToken) {
       window.location.replace(
@@ -175,6 +206,7 @@ function App() {
     if (existingToken) {
       setToken(existingToken.split("&")[0]);
       getAPI(existingToken);
+      getLandingRepo(existingToken.split("&")[0]);
       CurrentUser();
       getOpenIssues();
       getCloseIssues();
@@ -187,11 +219,6 @@ function App() {
     getComments(currentIssue.number);
   }, []);
 
-  useEffect(() => {
-    getLandingRepo();
-  }, [token !== null]);
-
-  console.log("pageStatus", pageStatus);
   return !isLanding ? (
     <>
       <div>
@@ -237,6 +264,7 @@ function App() {
           issues={issues}
           setIssues={setIssues}
           currentUser={currentUser}
+          token={token}
         />
       )}
       <PaginationPack
@@ -255,7 +283,11 @@ function App() {
       <Footer />
     </>
   ) : (
-    <LandingPage landingData={landingData} />
+    <LandingPage
+      landingData={landingData}
+      searchRepo={searchRepo}
+      token={token}
+    />
   );
 }
 

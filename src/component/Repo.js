@@ -18,10 +18,28 @@ export default function Repo(props) {
   const [key, setKey] = useState("write");
   const [queryTitle, setQueryTitle] = useState("");
   const [queryText, setQueryText] = useState("");
+console.log(queryText )
+  const headers = {
+    "User-Agent": "Mozilla/5.0",
+    Authorization: `token ${props.token && props.token.split("&")[0]}`,
+    "Content-type": "application/json",
+    Accept: "application/vnd.github+json"
+  };
 
-  const onSubmitIssue = () => {
-    setIsOpen(false);
-    console.log(queryText);
+  const onSubmitIssue = async e => {
+    e.preventDefault();
+    const url = `https://api.github.com/repos/nakasaky55/fake-imdb/issues`;
+
+    const post = await fetch(url, {
+      method: "POST",
+      headers: headers, 
+      body: JSON.stringify({
+        title: queryTitle,
+        body: queryText,
+        // assignees: ["haichungcn"],
+        // labels: ["bug"]
+      })
+    });
   };
   return (
     <Container>
@@ -229,7 +247,7 @@ export default function Repo(props) {
             <button
               disabled={!queryTitle}
               className="btn btn-primary"
-              onClick={() => onSubmitIssue()}
+              onClick={event => onSubmitIssue(event)}
             >
               Submit new issue
             </button>
