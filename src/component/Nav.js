@@ -6,9 +6,18 @@ export default function Navigation() {
     return (
         <>
             <Navbar bg="dark" variant="dark">
-                <Navbar.Brand href="#home">The GubHit</Navbar.Brand>
+                <Navbar.Brand href="#home">
+                <img
+                src="img/dog.svg"
+                width="30"
+                height="30"
+                className="d-inline-block align-top"
+                alt="React Bootstrap logo"
+              /> {' '}
+   
+                </Navbar.Brand>
                 <Form inline>
-                    <FormControl type="text" placeholder="Search or jump to..." className="mr-sm-2" />
+                    <FormControl  bsPrefix={"default"} type="text" placeholder="Search or jump to..." className="mr-sm-2 navSearch" />
                 </Form>
                 <Nav className="mr-auto">
                     <Nav.Link href="#home">Pull Request</Nav.Link>
