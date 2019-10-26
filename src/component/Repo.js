@@ -16,7 +16,7 @@ import ReactMarkdown from "react-markdown";
 import { Tab, Tabs } from "react-bootstrap";
 import moment from "moment";
 import LabelsDisplay from './LabelsDisplay';
-import SearchIssue from './SearchIssue';
+
 
 export default function Repo(props) {
   const [isOpen, setIsOpen] = useState(false);
