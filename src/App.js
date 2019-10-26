@@ -237,11 +237,14 @@ function App() {
             </div>
           ) : (
             <Repo
+              query={query}
               closeIssues={closeIssues}
               openIssues={openIssues}
               issues={issues}
               setIssues={setIssues}
               currentUser={currentUser}
+              // label={label}
+              // getLabel={getLabel}
               currentOwner={currentOwner}
               currentRepo={currentRepo}
             />

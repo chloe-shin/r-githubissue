@@ -5,7 +5,7 @@
   min-height: 100vh;
   min-width: 100vw;
   background-color: var(--primary-background);
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 /* Hai Chung */
 :root {
@@ -14,6 +14,8 @@
   --secondary-background: #e8eaec;
   --primary-strong: #171717;
   --primary-link: black;
+  --light: 80;
+  --threshold:60;
 }
 
 .outterContainer {
@@ -237,6 +239,228 @@ a {
   display: flex;
   justify-content: flex-end;
 }
+/*Vu*/
+.composer {
+  padding-left: 60px;
+  border: 0;
+}
+.new-comment {
+  max-width: 780px;
+}
+.comment-avatar {
+  float: left;
+  margin-left: -56px;
+  border-radius: 3px;
+}
+.d-inline-block {
+  display: inline-block !important;
+}
+.avatar {
+  width: 40px;
+  height: 40px;
+}
+.comment {
+  border: 1px solid gray;
+  border-radius: 3px;
+}
+.topic-header {
+  word-wrap: break-word;
+  padding: 8px !important;
+}
+.input-title {
+  display: block;
+  width: 100%;
+  padding: 4px 10px;
+  font-size: 16px;
+  min-height: 34px;
+  line-height: 20px;
+  color: black;
+  border: 1px solid gray;
+  border-radius: 3px;
+}
+.write-content {
+  display: block;
+  margin-right: 8px !important;
+  margin-left: 8px !important;
+  margin-top: 8px !important;
+}
+.text-aria {
+  display: block;
+  padding: 8px;
+  border: 1px solid gray;
+  border-bottom: 1px dashed gray;
+  line-height: 1.6;
+  font-size: 14px;
+  border-radius: 3px;
+  outline: none;
+  box-shadow: inset 1px 2px rgba(27, 31, 35, 0.075);
+  overflow: auto;
+  overflow-wrap: break-word;
+}
+.btn-primary {
+  color: white;
+  background-color: green;
+}
+.btn {
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid rgba(27, 31, 35, 0.2);
+  border-radius: 0.25em;
+}
+.button {
+  display: flex;
+  margin: 8px !important;
+  align-items: center;
+  justify-content: flex-end;
+}
+.popupIssues {
+  width: 1000px;
+  background-color: white;
+  margin-top: 20px;
+  margin-left: 50px;
+}
+.markdownReview {
+  width: 100%;
+  height: 434px;
+  display: block;
+  padding: 8px;
+  border: 1px solid gray;
+  border-bottom: 1px dashed gray;
+  border-radius: 3px;
+  outline: none;
+  box-shadow: inset 1px 2px rgba(27, 31, 35, 0.075);
+  overflow: auto;
+  overflow-wrap: break-word;
+}
+/*end Vu */
+
+.navSearch {
+  height: 30px;
+  width: 300px;
+  border-radius: 5px;
+  border-style: none;
+  background-color: rgba(255,255,255,.2)!important;
+  color: white !important;
+  padding: 10px;
+}
+
+/* Chloe */
+
+.labels {
+  --switch: calc((var(--light) - var(--threshold)) * -100%) !important;
+  color: hsl(0, 0%, var(--switch)) !important;
+  padding: 5px !important;
+  font-size: 0.7rem;
+  margin-left: 8px;
+}
+
+.Card {
+  width: 100%;
+}
+
+.comment-chloe{
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 40px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.fa-comment{
+  margin-right: 8px;
+  color: rgba(0, 0, 0, 0.5)
+}
+
+.stateOpen {
+  width: 17px;
+  margin-right: 6px;
+}
+
+.stateClose {
+  width: 17px;
+  margin-right: 6px;
+}
+
+.stateClose2 {
+  width: 17px;
+  margin-right: 6px;
+  margin-left: 6px;
+}
+
+.card-title {
+  display: flex;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+a {
+  color: var(--primary-link);
+}
+
+.User {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.card:hover {
+  background-color: rgba(1, 1, 1, 0.05);
+}
+
+.card {
+  border-radius: 0px !important;
+}
+
+.top {
+  width: 100%;
+  border: solid 1px rgba(0, 0, 0, 0.1);
+  padding: 15px 5px 15px 5px;
+}
+.dropdown-toggle {
+  background-color: transparent;
+  color: black;
+  border-style: none;
+  margin-left: 20px;
+}
+
+.dropdown-toggle:hover {
+  background-color: transparent;
+  color: black;
+}
+
+.DropdownGrp {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.dropdown-item {
+  font-size: 10px;
+}
+
+.totalcount {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.popOverimg {
+  width: 100px;
+  margin-right: 10px;
+}
+
+
+
 /*Vu*/
 .composer {
   padding-left: 60px;
