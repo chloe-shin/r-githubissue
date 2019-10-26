@@ -1,8 +1,10 @@
 
 import React from 'react';
 import {Navbar,Nav, Form, FormControl, Button} from 'react-bootstrap';
+import {NavLink} from 'react-router-dom';
 
-export default function Navigation() {
+export default function Navigation(props) {
+    let {currentOwner, currentRepo} = props
     return (
         <>
             <Navbar bg="dark" variant="dark">
@@ -20,10 +22,10 @@ export default function Navigation() {
                     <FormControl  bsPrefix={"default"} type="text" placeholder="Search or jump to..." className="mr-sm-2 navSearch" />
                 </Form>
                 <Nav className="mr-auto">
-                    <Nav.Link href="#home">Pull Request</Nav.Link>
-                    <Nav.Link href="#features">Issues</Nav.Link>
-                    <Nav.Link href="#pricing">Marketplace</Nav.Link>
-                    <Nav.Link href="#pricing">Explore</Nav.Link>
+                    <NavLink to="/">Home</NavLink>
+                    <NavLink to={`/${currentOwner}/${currentRepo}/issues`}>Repo</NavLink>
+                    <NavLink to="/">Marketplace</NavLink>
+                    <NavLink to="/">Explore</NavLink>
                 </Nav>
                 
             </Navbar>

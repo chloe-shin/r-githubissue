@@ -13,11 +13,13 @@
     "markdown-it": "^10.0.0",
     "parse-link-header": "^1.0.1",
     "moment": "^2.24.0",
+    "parse-link-header": "^1.0.1",
     "react": "^16.11.0",
     "react-bootstrap": "^1.0.0-beta.14",
     "react-dom": "^16.11.0",
     "react-markdown": "^4.2.2",
     "react-modal": "^3.10.1",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
     "react-spinners": "^0.6.1",
     "request": "^2.88.0"
