@@ -6,19 +6,28 @@ import {
   Button,
   Col,
   Dropdown,
-  DropdownButton
+  DropdownButton,
+  Form,
+  FormControl,
+  OverlayTrigger,
+  Popover
 } from "react-bootstrap";
 import Modal from "react-modal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ReactMarkdown from "react-markdown";
 import { Tab, Tabs } from "react-bootstrap";
 import moment from "moment";
+import LabelsDisplay from "./LabelsDisplay";
+import { Link } from "react-router-dom";
+
 export default function Repo(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [key, setKey] = useState("write");
   const [queryTitle, setQueryTitle] = useState("");
   const [queryText, setQueryText] = useState("");
-console.log(queryText )
+  const [query, setQuery] = useState("");
+  const [isClear, setIsClear] = useState(false);
+  
   const headers = {
     "User-Agent": "Mozilla/5.0",
     Authorization: `token ${props.token && props.token.split("&")[0]}`,
@@ -32,18 +41,51 @@ console.log(queryText )
 
     const post = await fetch(url, {
       method: "POST",
-      headers: headers, 
+      headers: headers,
       body: JSON.stringify({
         title: queryTitle,
-        body: queryText,
+        body: queryText
         // assignees: ["haichungcn"],
         // labels: ["bug"]
       })
     });
   };
+
+  const popover = (
+    <Popover id="popover-basic">
+      <Popover.Title as="h3"> </Popover.Title>
+      <Popover.Content>
+        And here's some <strong>amazing</strong> content. It's very engaging.
+        right?
+      </Popover.Content>
+    </Popover>
+  );
   return (
     <Container>
-      <div>
+      <div className="searchIssue_newIssue">
+        <Form
+          inline
+          onSubmit={event => props.searchIssues(event)}
+          onChange={event => props.setQuery(event.target.value)}
+        >
+          <FormControl
+            type="text"
+            placeholder="Search all issues.."
+            className=" mr-sm-2"
+          />
+          <Button
+            className="search-button"
+            type="submit"
+            onClick={() => setIsClear(!false)}
+          >
+            Submit
+          </Button>
+          {isClear && (
+            <button onClick={() => props.getAPI()} className="clear-search">
+              Clear current search query, filters, and sorts
+            </button>
+          )}
+        </Form>
         <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
           New issue
         </button>
@@ -53,7 +95,7 @@ console.log(queryText )
           <div className="top">
             <Container>
               <Row>
-                <Col lg={4}>
+                <Col lg={4} className="totalcount">
                   <a
                     href="#"
                     onClick={() => props.setIssues(props.openIssues.items)}
@@ -62,11 +104,12 @@ console.log(queryText )
                     {props.openIssues &&
                       props.openIssues.total_count} opened{" "}
                   </a>
+
                   <a
                     href="#"
                     onClick={() => props.setIssues(props.closeIssues.items)}
                   >
-                    <img className="stateClose" src="img/success.svg" />
+                    <img className="stateClose2" src="img/success.svg" />
                     {props.closeIssues &&
                       props.closeIssues.total_count} closed{" "}
                   </a>
@@ -128,39 +171,61 @@ console.log(queryText )
       <Row>
         {props.issues &&
           props.issues.map(item => {
+            console.log("issue, listen to charles", item);
             return (
-              <Col lg={12}>
+              <Col key={`issue#${item.number}`} lg={12}>
                 <Card>
                   <Row className="cardrow">
                     <Col lg={10}>
                       <Card.Body>
-                        <Card.Title>
-                          <div className="State">
-                            {item.state === "open" ? (
-                              <img className="stateOpen" src="img/open.svg" />
-                            ) : (
-                              <img
-                                className="stateClose"
-                                src="img/success.svg"
-                              />
-                            )}{" "}
+                        <Link
+                          to={`/${props.currentOwner}/${props.currentRepo}/issues/${item.number}`}
+                        >
+                          <Card.Title>
+                            <div className="State">
+                              {item.state === "open" ? (
+                                <img className="stateOpen" src="img/open.svg" />
+                              ) : (
+                                <img
+                                  className="stateClose"
+                                  src="img/success.svg"
+                                />
+                              )}{" "}
+                              <br />
+                            </div>
+                            <a href="#">
+                              {" "}
+                              {item.title} <br />{" "}
+                            </a>{" "}
                             <br />
-                          </div>
-                          <a href="#">
-                            {" "}
-                            {item.title} <br />{" "}
-                          </a>
-                        </Card.Title>
+                            <LabelsDisplay labels={item.labels} />
+                          </Card.Title>
+                        </Link>
                         <Card.Text>
-                          <div className="Update">
-                            #{item.number} {item.state}{" "}
-                            {moment(item.updated_at)
-                              .startOf("day")
-                              .fromNow()}{" "}
-                            by
+                          #{item.number} {item.state}{" "}
+                          {moment(item.updated_at)
+                            .startOf("day")
+                            .fromNow()}{" "}
+                          by
+                          <OverlayTrigger
+                            trigger="hover"
+                            placement="right"
+                            overlay={
+                              <Popover id="popover-basic">
+                                <Popover.Title as="h3">
+                                  <img
+                                    className="popOverimg"
+                                    src={item.user.avatar_url}
+                                  />
+                                  <strong>{item.user.login}</strong>
+                                </Popover.Title>
+                                <Popover.Content></Popover.Content>
+                              </Popover>
+                            }
+                          >
                             <a href={item.user.html_url}> {item.user.login} </a>
-                            <br />
-                          </div>
+                          </OverlayTrigger>
+                          <br />
                         </Card.Text>
                       </Card.Body>
                     </Col>
@@ -168,8 +233,31 @@ console.log(queryText )
                     <Col lg={2}>
                       <div className="User">
                         <img className="avatar" src={item.user.avatar_url} />
-                        <a href={item.user.html_url}> {item.user.login} </a>
-                        {item.comments}
+                        <OverlayTrigger
+                          trigger="hover"
+                          placement="left"
+                          overlay={
+                            <Popover id="popover-basic">
+                              <Popover.Title as="h3">
+                                <img
+                                  className="popOverimg"
+                                  src={item.user.avatar_url}
+                                />
+                                <strong>{item.user.login}</strong>
+                              </Popover.Title>
+                              <Popover.Content>
+                                {item.user.site_admin}
+                              </Popover.Content>
+                            </Popover>
+                          }
+                        >
+                          <a href={item.user.html_url}> {item.user.login} </a>
+                        </OverlayTrigger>
+
+                        <div className="comment-chloe">
+                          <i class="fas fa-comment"></i>
+                          {item.comments}
+                        </div>
                       </div>
                     </Col>
                   </Row>
@@ -178,6 +266,7 @@ console.log(queryText )
             );
           })}
       </Row>
+
       <Modal
         className="popupIssues"
         isOpen={isOpen}
