@@ -10,7 +10,6 @@ import PaginationPack from "./component/Pagination";
 import { default as localIssues } from "./utils";
 import { closeissue, openissue } from "./utils";
 import { comments as localComments } from "./utils";
-import { Form, FormControl, Button } from "react-bootstrap";
 
 // Can be a string as well. Need to ensure each key-value pair ends with ;
 const override = `css
@@ -28,12 +27,12 @@ function App() {
   const [pageStatus, setPageStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
-  const [isClear, setIsClear] = useState(false);
   const [openIssues, setOpenIssues] = useState([]);
   const [closeIssues, setCloseIssues] = useState([]);
   const [currentIssue, setCurrentIssue] = useState({});
   const [comments, setComments] = useState([]);
   const [currentUser, setCurrentUser] = useState();
+  const [isClear, setIsClear] = useState(false);
 
   const CurrentUser = async () => {
     const url = `https://api.github.com/user`;
@@ -58,24 +57,24 @@ function App() {
     // const urls = response.headers.get("link").split(",").map(item=>item.split(";")[0].replace("<","").replace(">",""));
     // console.log(urls)
 
-    const links = response.headers
-      .get("link")
-      .split(",")
-      .map(url => {
-        return {
-          link: url
-            .split(";")[0]
-            .replace("<", "")
-            .replace(">", ""),
-          value: url
-            .split(";")[1]
-            .trim()
-            .replace('"', "")
-            .replace('"', "")
-        };
-      });
+    // const links = response.headers
+    //   .get("link")
+    //   .split(",")
+    //   .map(url => {
+    //     return {
+    //       link: url
+    //         .split(";")[0]
+    //         .replace("<", "")
+    //         .replace(">", ""),
+    //       value: url
+    //         .split(";")[1]
+    //         .trim()
+    //         .replace('"', "")
+    //         .replace('"', "")
+    //     };
+    //   });
 
-    setPageStatus(links);
+    // setPageStatus(links);
     setIssues(jsonData);
     setIsLoading(false);
   };
@@ -174,34 +173,9 @@ function App() {
   useEffect(() => {
     getComments(currentIssue.number);
   }, []);
-console.log("pageStatus", pageStatus)
+  console.log("pageStatus", pageStatus);
   return (
     <>
-      <div>
-        <Form
-          inline
-          onSubmit={event => searchIssues(event)}
-          onChange={event => setQuery(event.target.value)}
-        >
-          <FormControl
-            type="text"
-            placeholder="is:issue is:open"
-            className=" mr-sm-2"
-          />
-          <Button
-            className="search-button"
-            type="submit"
-            onClick={() => setIsClear(!false)}
-          >
-            Submit
-          </Button>
-          {isClear && (
-            <button onClick={() => getAPI()} className="clear-search">
-              Clear current search query, filters, and sorts
-            </button>
-          )}
-        </Form>
-      </div>
       <Nav />
       {isLoading ? (
         <div className="sweet-loading">
@@ -220,6 +194,12 @@ console.log("pageStatus", pageStatus)
           issues={issues}
           setIssues={setIssues}
           currentUser={currentUser}
+          searchIssues={searchIssues}
+          setQuery={setQuery}
+          query={query}
+          getAPI={getAPI}
+          isClear={isClear}
+          setIsClear={setIsClear}
         />
       )}
       <PaginationPack

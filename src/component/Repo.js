@@ -6,7 +6,9 @@ import {
   Button,
   Col,
   Dropdown,
-  DropdownButton
+  DropdownButton,
+  Form,
+  FormControl
 } from "react-bootstrap";
 import Modal from "react-modal";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -18,14 +20,40 @@ export default function Repo(props) {
   const [key, setKey] = useState("write");
   const [queryTitle, setQueryTitle] = useState("");
   const [queryText, setQueryText] = useState("");
+  const [query, setQuery] = useState("");
+  const [isClear, setIsClear] = useState(false);
 
   const onSubmitIssue = () => {
     setIsOpen(false);
     console.log(queryText);
   };
+
   return (
     <Container>
-      <div>
+      <div className="searchIssue_newIssue">
+        <Form
+          inline
+          onSubmit={event => props.searchIssues(event)}
+          onChange={event => props.setQuery(event.target.value)}
+        >
+          <FormControl
+            type="text"
+            placeholder="Search all issues.."
+            className=" mr-sm-2"
+          />
+          <Button
+            className="search-button"
+            type="submit"
+            onClick={() => setIsClear(!false)}
+          >
+            Submit
+          </Button>
+          {isClear && (
+            <button onClick={() => props.getAPI()} className="clear-search">
+              Clear current search query, filters, and sorts
+            </button>
+          )}
+        </Form>
         <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
           New issue
         </button>
