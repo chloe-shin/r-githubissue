@@ -15,7 +15,7 @@
   --primary-strong: #171717;
   --primary-link: black;
   --light: 80;
-  --threshold:60;
+  --threshold: 60;
 }
 
 .outterContainer {
@@ -35,15 +35,15 @@ span {
   font-size: 13px;
 }
 
-.outterContainer .badge{
+.outterContainer .badge {
   margin-right: 1rem;
 }
 
-.outterContainer h3{
+.outterContainer h3 {
   font-weight: normal;
 }
 
-.outterContainer .h3{
+.outterContainer .h3 {
   font-weight: normal;
 }
 
@@ -60,7 +60,7 @@ span {
 }
 
 .outterContainer .rightCol {
-  padding:0;
+  padding: 0;
 }
 
 .timeLine {
@@ -86,13 +86,13 @@ span {
 .toTheRight {
   margin-top: 2.8px;
   font-weight: normal;
-  float:right;
+  float: right;
 }
 
-.issueNumber{
+.issueNumber {
   color: var(--primary-strong);
 }
-.emoji{
+.emoji {
   font-size: 14px;
   margin-right: 3px;
   color: var(--primary-strong);
@@ -133,8 +133,8 @@ span {
   font-size: 13px;
   position: relative;
   left: 64px;
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
 }
 
 .closeBadge i {
@@ -143,17 +143,17 @@ span {
 }
 
 .bottomDivider {
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
   border-width: 2px;
 }
 
 .avatarClosed {
-  margin:0;
+  margin: 0;
   margin-right: 5px;
-  padding:0;
+  padding: 0;
   align-self: baseline;
-  position:relative;
+  position: relative;
   top: -3px;
 }
 
@@ -343,7 +343,7 @@ a {
   width: 300px;
   border-radius: 5px;
   border-style: none;
-  background-color: rgba(255,255,255,.2)!important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
   color: white !important;
   padding: 10px;
 }
@@ -362,7 +362,7 @@ a {
   width: 100%;
 }
 
-.comment-chloe{
+.comment-chloe {
   display: flex;
   align-items: center;
 }
@@ -374,9 +374,9 @@ a {
   margin-right: 5px;
 }
 
-.fa-comment{
+.fa-comment {
   margin-right: 8px;
-  color: rgba(0, 0, 0, 0.5)
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .stateOpen {
@@ -458,8 +458,6 @@ a {
   width: 100px;
   margin-right: 10px;
 }
-
-
 
 /*Vu*/
 .composer {
@@ -579,7 +577,14 @@ a {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   box-shadow: inset 0 1px 2px rgba(27, 31, 35, 0.075);
-  width: 13rem;
+  width: 22rem !important;
+  padding: 12px 25px;
+}
+
+.fa-searchengin {
+  position: absolute;
+  padding-left: 6px;
+  color: grey;
 }
 
 .clear-search {
@@ -593,6 +598,10 @@ a {
   text-decoration: underline;
   cursor: pointer;
   text-decoration: none;
+}
+
+.search-icon {
+  color: grey;
 }
 
 /* END CUONG */

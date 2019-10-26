@@ -90,9 +90,10 @@ function App() {
   const searchIssues = async event => {
     const headers = {
       Accept: "application / vnd.github.v3 + json"
+      // Accept: "application/vnd.github.v3.text-match+json"
     };
     event && event.preventDefault();
-    const url = `https://api.github.com/search/issues?q=${query}?sort=created&order=desc?per_page=20`;
+    const url = `https://api.github.com/search/issues?q=${query}+sort=created&order=desc?per_page=20`;
     const response = await fetch(url, {
       method: "GET",
       headers: headers
@@ -229,6 +230,7 @@ function App() {
               getAPI={getAPI}
               isClear={isClear}
               setIsClear={setIsClear}
+              searchIssues={searchIssues}
             />
           )}
           <PaginationPack

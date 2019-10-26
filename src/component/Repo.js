@@ -28,6 +28,10 @@ export default function Repo(props) {
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
 
+  function refreshPage() {
+    window.location.reload();
+  }
+
   const onSubmitIssue = () => {
     setIsOpen(false);
     console.log(queryText);
@@ -50,20 +54,23 @@ export default function Repo(props) {
           onSubmit={event => props.searchIssues(event)}
           onChange={event => props.setQuery(event.target.value)}
         >
+          {/* <span className="search-icon"><i class="fab fa-searchengin"></i></span> */}
           <FormControl
             type="text"
-            placeholder="Search all issues.."
+            placeholder=" Search all issues.."
             className=" mr-sm-2"
           />
+          <i class="fab fa-searchengin"></i>
+
           <Button
             className="search-button"
             type="submit"
             onClick={() => setIsClear(!false)}
           >
-            Submit
+            > Submit
           </Button>
           {isClear && (
-            <button onClick={() => props.getAPI()} className="clear-search">
+            <button onClick={() => refreshPage()} className="clear-search">
               Clear current search query, filters, and sorts
             </button>
           )}
@@ -153,7 +160,7 @@ export default function Repo(props) {
       <Row>
         {props.issues &&
           props.issues.map(item => {
-            console.log("issue, listen to charles", item);
+            // console.log("issue, listen to charles", item);
             return (
               <Col key={`issue#${item.number}`} lg={12}>
                 <Card>
@@ -177,7 +184,8 @@ export default function Repo(props) {
                             </div>
                             <a href="#">
                               {" "}
-                              {item.title} <br />{" "}
+                              {item.title}
+                              <br />{" "}
                             </a>{" "}
                             <br />
                             <LabelsDisplay labels={item.labels} />
