@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import moment from "moment";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 
 export default function Issues(props) {
   let { issue, comments } = props;
-  console.log("within Issue.js:", issue, "and the comment is: ", comments);
+  const [dataComment, setDataComment] =useState("");
+  // console.log("within Issue.js:", issue, "and the comment is: ", comments);
+  console.log("issue", props.token);
+  const url = `https://api.github.com/repos/nakasaky55/fake-imdb/issues/1/comments`;
+  const headers = {
+    "User-Agent": "Mozilla/5.0",
+    "Content-type": "application/json",
+    Accept: "application/vnd.github+json",
+    Authorization: `token ${props.token && props.token.split("&")[0]}`
+  };
+  const postComment = async (comment) => {
+    const body = {
+      value: "hahahahaha"
+    };
+    const post = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      
+      body: `${comment}`
+    });
+  };
   return (
     issue && (
       <>
@@ -76,6 +96,17 @@ export default function Issues(props) {
               </Row>
             );
           })}
+          <Row>
+            <Col lg={6} className="comment-section">
+              <img
+                src={issue.user.avatar_url}
+                className="avatarIssue"
+                alt={`${issue.user.login}'s avatar`}
+              />
+              <textarea onChange={e => setDataComment(e.target.value)}></textarea>
+              <Button onClick={() => postComment(dataComment)}>Post </Button>
+            </Col>
+          </Row>
         </div>
         {/* rendering all the comments section */}
       </>

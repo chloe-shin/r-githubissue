@@ -11,6 +11,7 @@ import { default as localIssues } from "./utils";
 import { closeissue, openissue } from "./utils";
 import { comments as localComments } from "./utils";
 import { Form, FormControl, Button } from "react-bootstrap";
+import LandingPage from "./component/LandingPage";
 
 // Can be a string as well. Need to ensure each key-value pair ends with ;
 const override = `css
@@ -23,7 +24,7 @@ const override = `css
 const clientId = process.env.REACT_APP_CLIENT_ID;
 // console.log("id", clientId);
 function App() {
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState("");
   const [issues, setIssues] = useState([]);
   const [pageStatus, setPageStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +36,9 @@ function App() {
   const [comments, setComments] = useState([]);
   const [currentUser, setCurrentUser] = useState();
 
+  const [isLanding, setIsLanding] = useState(false);
+  const [landingData, setLandingData] = useState([]);
+
   const CurrentUser = async () => {
     const url = `https://api.github.com/user`;
     const response = await fetch(url);
@@ -42,9 +46,8 @@ function App() {
     setCurrentUser(data);
   };
 
-  const getAPI = async (
-    url = `https://api.github.com/repos/facebook/react/issues?access_token=73098386f1f5fbd159b090711b39ab2889842362&state=all&per_page=10`
-  ) => {
+  const getAPI = async (est) => {
+    const url = `https://api.github.com/repos/facebook/react/issues?access_token=${est}&state=all&per_page=10`
     const headers = {
       Accept: "application / vnd.github.v3 + json"
     };
@@ -113,7 +116,7 @@ function App() {
     setPageStatus(links);
   };
 
-  // console.log(issues);
+  console.log("token", token);
 
   //function to get all the comments of the current Issue from api
   const getComments = async number => {
@@ -140,13 +143,22 @@ function App() {
     // console.log ('cloased issues', closeIssues)
     setCloseIssues(closeissue);
   };
+
+  const getLandingRepo = async () => {
+    const url = `https://api.github.com/search/repositories?q=stars:>=100000&fork:false?access_token=${token}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    setLandingData(data);
+  };
+
   useEffect(() => {
     const existingToken = sessionStorage.getItem("token");
     const accessToken =
       window.location.search.split("=")[0] === "?access_token"
         ? window.location.search.split("=")[1]
         : null;
-    getAPI();
+    // getAPI();  
 
     if (!accessToken && !existingToken) {
       window.location.replace(
@@ -156,12 +168,12 @@ function App() {
 
     if (accessToken) {
       console.log(`New accessToken: ${accessToken}`);
-      setToken(accessToken);
-      sessionStorage.setItem("token", accessToken);
+      setToken(accessToken.split("&")[0]);
     }
+    sessionStorage.setItem("token", accessToken);
 
     if (existingToken) {
-      setToken(existingToken);
+      setToken(existingToken.split("&")[0]);
       getAPI(existingToken);
       CurrentUser();
       getOpenIssues();
@@ -174,8 +186,13 @@ function App() {
   useEffect(() => {
     getComments(currentIssue.number);
   }, []);
-console.log("pageStatus", pageStatus)
-  return (
+
+  useEffect(() => {
+    getLandingRepo();
+  }, [token !== null]);
+
+  console.log("pageStatus", pageStatus);
+  return !isLanding ? (
     <>
       <div>
         <Form
@@ -231,12 +248,14 @@ console.log("pageStatus", pageStatus)
       )}
       {/* <Issues issues={issues} id={510496674} /> */}
       {currentIssue ? (
-        <Issues issue={localIssues[0]} comments={comments} />
+        <Issues issue={localIssues[0]} comments={comments} token={token} />
       ) : (
         <p>No Issue</p>
       )}
       <Footer />
     </>
+  ) : (
+    <LandingPage landingData={landingData} />
   );
 }
 

@@ -35,7 +35,7 @@
 ul,
 li,
 span {
-  font-size: 0.7rem;
+  font-size: 14px;
 }
 
 .outterContainer strong {
@@ -43,14 +43,14 @@ span {
 }
 
 .outterContainer pre {
-  font-size: 0.6rem;
+  font-size: 13px;
   padding: 20px;
   background-color: var(--secondary-background);
   border-radius: 3px;
 }
 
 .discussionBox {
-  width: 60rem;
+  width: 90rem;
   height: auto;
   border-radius: 3px;
   float: right;
@@ -293,8 +293,44 @@ a {
 
 /* END CUONG */
 
+/* Khoa */
 .pagination {
   display: flex;
   justify-content: center;
   margin-top: 10px;
+}
+
+textarea {
+  width: 100%;
+  margin:0
+}
+
+.comment-section {
+  display: flex;
+  flex-direction: row;
+}
+
+.comment-section img {
+  margin-right: 10px;
+}
+
+.comment-section textarea {
+  margin-left: 15px;
+}
+
+.landing-page {
+  background-image: url('./img/gitwallpaper.jpg');
+  background-size: cover;
+  min-height: 100vh;
+}
+
+.landing-left-side {
+  min-height: 80vh;
+  background-color: red;
+  margin-top: 10vh;
+}
+.landing-right-side {
+  min-height: 80vh;
+  background-color: white;
+  margin-top: 10vh;
 }
