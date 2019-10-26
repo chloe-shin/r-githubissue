@@ -12,8 +12,6 @@ import { closeissue, openissue } from "./utils";
 import { comments as localComments } from "./utils";
 import { Form, FormControl, Button } from "react-bootstrap";
 
-
-
 // Can be a string as well. Need to ensure each key-value pair ends with ;
 const override = `css
   display: block;
@@ -64,7 +62,7 @@ function App() {
 
 
   const getAPI = async (
-    url = `https://api.github.com/repos/facebook/react/issues?access_token=&scope&state=all&per_page=10`
+    url = `https://api.github.com/repos/facebook/react/issues?access_token=${sessionStorage.getItem('token')}&scope&state=all&per_page=10`
   ) => {
     const headers = {
       Accept: "application / vnd.github.v3 + json"

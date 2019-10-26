@@ -191,6 +191,7 @@ a {
   background-color: transparent;
   color: black;
   border-style: none;
+  margin-left: 20px;
 }
 
 .dropdown-toggle:hover {
