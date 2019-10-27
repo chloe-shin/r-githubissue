@@ -18,7 +18,7 @@ import ReactMarkdown from "react-markdown";
 import { Tab, Tabs } from "react-bootstrap";
 import moment from "moment";
 import LabelsDisplay from "./LabelsDisplay";
-import { Link } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import DropDownGrp from "./DropDownGrp";
 import PsudoContainer from "./PsudoContainer";
 
@@ -28,6 +28,8 @@ export default function Repo(props) {
   const [queryTitle, setQueryTitle] = useState("");
   const [queryText, setQueryText] = useState("");
   const [isClear, setIsClear] = useState(false);
+  let { repo, owner } = useParams();
+
   const [openIssues, setOpenIssues] = useState(0);
   const [closeIssues, setCloseIssues] = useState(0);
 
@@ -41,10 +43,12 @@ export default function Repo(props) {
     "Content-type": "application/json",
     Accept: "application/vnd.github+json"
   };
+
   useEffect(() => {
-    getOpenIssues(props.currentOwner, props.currentRepo);
-    getCloseIssues(props.currentOwner, props.currentRepo);
-  }, []);
+    getOpenIssues(owner, repo);
+    getCloseIssues(owner, repo);
+  }, [repo, owner]);
+
 
   const getOpenIssues = async (user, repo) => {
     const token = sessionStorage.getItem("token");
@@ -58,12 +62,12 @@ export default function Repo(props) {
     });
     const openData = await response.json();
     setOpenIssues(openData);
-    console.log(
-      "open data called by Chloe",
-      openData,
-      'open issues"',
-      openIssues
-    );
+    // console.log(
+    //   "open data called by Chloe",
+    //   openData,
+    //   'open issues"',
+    //   openIssues
+    // );
   };
 
   const getCloseIssues = async (user, repo) => {
@@ -101,6 +105,7 @@ export default function Repo(props) {
 
   return (
     <Container>
+      <p className="directoryIndicator mt-3 mb-1 pl-0"><Link to="/">{owner}</Link>/<Link to={`/${owner}/${repo}/issues`}>{repo}</Link></p>
       <PsudoContainer
         currentOwner={props.currentOwner}
         currentRepo={props.currentRepo}
@@ -110,33 +115,33 @@ export default function Repo(props) {
         {props.isError ? (
           ""
         ) : (
-          <Form
-            inline
-            onSubmit={event => {
-              event.preventDefault();
-              props.searchIssues(event);
-            }}
-            onChange={event => {
-              event.preventDefault();
-              props.setQuery(event.target.value);
-            }}
-          >
-            <FormControl
-              type="text"
-              placeholder=" Search all issues.."
-              className=" mr-sm-2"
-            />
-            <i class="fab fa-searchengin"></i>
-
-            <Button
-              className="search-button"
-              type="submit"
-              // onClick={() => setIsClear(!false)}
+            <Form
+              inline
+              onSubmit={event => {
+                event.preventDefault();
+                props.searchIssues(event);
+              }}
+              onChange={event => {
+                event.preventDefault();
+                props.setQuery(event.target.value);
+              }}
             >
-              > Submit
+              <FormControl
+                type="text"
+                placeholder=" Search all issues.."
+                className=" mr-sm-2"
+              />
+              <i class="fab fa-searchengin"></i>
+
+              <Button
+                className="search-button"
+                type="submit"
+              // onClick={() => setIsClear(!false)}
+              >
+                > Submit
             </Button>
-          </Form>
-        )}
+            </Form>
+          )}
 
         <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
           New issue
@@ -170,83 +175,115 @@ export default function Repo(props) {
           </Card.Body>
         </Card>
       ) : (
-        <>
-          <Row>
-            <Col lg={12}>
-              <div className="top">
-                <Container>
-                  <Row>
-                    <Col lg={4} className="totalcount">
-                      <a
-                        href="#"
-                        onClick={() => props.setIssues(openIssues.items)}
-                      >
-                        <img className="stateOpen" src="/img/open.svg" />
-                        {openIssues.total_count} opened{" "}
-                      </a>
+          <>
+            <Row>
+              <Col lg={12}>
+                <div className="top">
+                  <Container>
+                    <Row>
+                      <Col lg={4} className="totalcount">
+                        <a
+                          href="#"
+                          onClick={() => props.setIssues(openIssues.items)}
+                        >
+                          <img className="stateOpen" src="/img/open.svg" />
+                          {openIssues.total_count} opened{" "}
+                        </a>
 
-                      <a
-                        href="#"
-                        onClick={() => props.setIssues(closeIssues.items)}
-                      >
-                        <img className="stateClose2" src="/img/success.svg" />
-                        {closeIssues.total_count} closed{" "}
-                      </a>
-                    </Col>
-                    <Col lg={8}>
-                      {" "}
-                      <DropDownGrp />
-                    </Col>
-                  </Row>
-                </Container>
-              </div>
-            </Col>
-          </Row>
+                        <a
+                          href="#"
+                          onClick={() => props.setIssues(closeIssues.items)}
+                        >
+                          <img className="stateClose2" src="/img/success.svg" />
+                          {closeIssues.total_count} closed{" "}
+                        </a>
+                      </Col>
+                      <Col lg={8}>
+                        {" "}
+                        <DropDownGrp />
+                      </Col>
+                    </Row>
+                  </Container>
+                </div>
+              </Col>
+            </Row>
 
-          <Row>
-            {props.issues &&
-              props.issues.map(item => {
-                console.log("issue, listen to charles", item);
-                return (
-                  <Col key={`issue#${item.number}`} lg={12}>
-                    <Card>
-                      <Row className="cardrow">
-                        <Col lg={10}>
-                          <Card.Body>
-                            <Link
-                              to={`/${props.currentOwner}/${props.currentRepo}/issues/${item.number}`}
-                            >
-                              <Card.Title>
-                                <div className="State">
-                                  {item.state === "open" ? (
-                                    <img
-                                      className="stateOpen"
-                                      src="/img/open.svg"
-                                    />
-                                  ) : (
-                                    <img
-                                      className="stateClose"
-                                      src="/img/success.svg"
-                                    />
-                                  )}{" "}
-                                  <br />
-                                </div>
-                                <a href="#">
-                                  {" "}
-                                  {item.title}
-                                  <LabelsDisplay labels={item.labels} />
-                                </a>
-                              </Card.Title>
-                            </Link>
-                            <Card.Text>
-                              #{item.number} {item.state}{" "}
-                              {moment(item.updated_at)
-                                .startOf("day")
-                                .fromNow()}{" "}
-                              by
+            <Row>
+              {props.issues &&
+                props.issues.map(item => {
+                  console.log("issue, listen to charles", item);
+                  return (
+                    <Col key={`issue#${item.number}`} lg={12}>
+                      <Card>
+                        <Row className="cardrow">
+                          <Col lg={10}>
+                            <Card.Body>
+                              <Link
+                                to={`/${props.currentOwner}/${props.currentRepo}/issues/${item.number}`}
+                              >
+                                <Card.Title>
+                                  <div className="State">
+                                    {item.state === "open" ? (
+                                      <img
+                                        className="stateOpen"
+                                        src="/img/open.svg"
+                                      />
+                                    ) : (
+                                        <img
+                                          className="stateClose"
+                                          src="/img/success.svg"
+                                        />
+                                      )}{" "}
+                                    <br />
+                                  </div>
+                                  <a href="#">
+                                    {" "}
+                                    {item.title}
+                                    <LabelsDisplay labels={item.labels} />
+                                  </a>
+                                </Card.Title>
+                              </Link>
+                              <Card.Text>
+                                #{item.number} {item.state}{" "}
+                                {moment(item.updated_at)
+                                  .startOf("day")
+                                  .fromNow()}{" "}
+                                by
+                              <OverlayTrigger
+                                  trigger="hover"
+                                  placement="right"
+                                  overlay={
+                                    <Popover id="popover-basic">
+                                      <Popover.Title as="h3">
+                                        <img
+                                          className="popOverimg"
+                                          src={item.user.avatar_url}
+                                        />
+                                        <strong>{item.user.login}</strong>
+                                      </Popover.Title>
+                                      <Popover.Content></Popover.Content>
+                                    </Popover>
+                                  }
+                                >
+                                  <a href={item.user.html_url}>
+                                    {" "}
+                                    {item.user.login}{" "}
+                                  </a>
+                                </OverlayTrigger>
+                                <br />
+                              </Card.Text>
+                            </Card.Body>
+                          </Col>
+
+                          <Col lg={2}>
+                            <div className="User">
+                              <img
+                                className="avatar"
+                                src={item.user.avatar_url}
+                              />
                               <OverlayTrigger
                                 trigger="hover"
-                                placement="right"
+                                placement="left"
                                 overlay={
                                   <Popover id="popover-basic">
                                     <Popover.Title as="h3">
@@ -256,7 +293,9 @@ export default function Repo(props) {
                                       />
                                       <strong>{item.user.login}</strong>
                                     </Popover.Title>
-                                    <Popover.Content></Popover.Content>
+                                    <Popover.Content>
+                                      {item.user.site_admin}
+                                    </Popover.Content>
                                   </Popover>
                                 }
                               >
@@ -265,55 +304,21 @@ export default function Repo(props) {
                                   {item.user.login}{" "}
                                 </a>
                               </OverlayTrigger>
-                              <br />
-                            </Card.Text>
-                          </Card.Body>
-                        </Col>
 
-                        <Col lg={2}>
-                          <div className="User">
-                            <img
-                              className="avatar"
-                              src={item.user.avatar_url}
-                            />
-                            <OverlayTrigger
-                              trigger="hover"
-                              placement="left"
-                              overlay={
-                                <Popover id="popover-basic">
-                                  <Popover.Title as="h3">
-                                    <img
-                                      className="popOverimg"
-                                      src={item.user.avatar_url}
-                                    />
-                                    <strong>{item.user.login}</strong>
-                                  </Popover.Title>
-                                  <Popover.Content>
-                                    {item.user.site_admin}
-                                  </Popover.Content>
-                                </Popover>
-                              }
-                            >
-                              <a href={item.user.html_url}>
-                                {" "}
-                                {item.user.login}{" "}
-                              </a>
-                            </OverlayTrigger>
-
-                            <div className="comment-chloe">
-                              <i class="fas fa-comment"></i>
-                              {item.comments}
+                              <div className="comment-chloe">
+                                <i class="fas fa-comment"></i>
+                                {item.comments}
+                              </div>
                             </div>
-                          </div>
-                        </Col>
-                      </Row>
-                    </Card>
-                  </Col>
-                );
-              })}
-          </Row>
-        </>
-      )}
+                          </Col>
+                        </Row>
+                      </Card>
+                    </Col>
+                  );
+                })}
+            </Row>
+          </>
+        )}
 
       <Modal
         className="popupIssues"

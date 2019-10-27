@@ -16,27 +16,6 @@ To create a GIF, use [LiceCap](http://www.cockos.com/licecap/), [RecordIt](http:
 <img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 ```
 
-## Detail in required - note taken by Khoa
-
-- [x] User can see his/her avatar on the right of navbar.
-- [ ] User can navigate back to homepage when click logo on left side.
-- [ ] User can see his/her issues when click "Issues" on navbar.
-- [x] User can search a repo from search field on navbar, the results will be displayed with pagination in the bottom. If there's no matched resutls, it will show an error message depends on returning code.
-
-- [ ] User can see search result on the right of screen, refer to github style with id of the repo owner.
-- [x] User can see all issues of a repo when click on it.
-- [x] User should be able to see the following information for each issue:
-
-Issue Title _ Number of the issue
-Owner of the Issue
-Owner Avatar _ How long ago the issue was created in a human-friendly format (e.g. 2 days ago)
-Body of the Issue, descrition ( 120 words )
-Label - note the color as returned by the API.
-State of Issue (Open/Closed).
-The user should be able to see multiple pages of results, by clicking a pagination control.
-
-
-- [ ] User can see README.md of that repo rendered in Markdown.
 
 ## Required Features 🎯
 
@@ -74,7 +53,7 @@ Preview
 
 ## Additional User Stories
 
-- [ ] Think of something cool here, people. This is your last React group project!
+- [x] Landing Page for start
 
 ## Time Spent and Lessons Learned
 
@@ -99,6 +78,4 @@ Call API by using token was the most difficult part as there are many bugs/ erro
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
-
 

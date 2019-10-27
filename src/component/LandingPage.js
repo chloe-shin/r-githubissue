@@ -4,16 +4,17 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 // import { faCoffee } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import PaginationPack from "./Pagination";
+
 
 export default function LandingPage(props) {
   const [query, setQuery] = useState("");
-  console.log("prprpr", props.search);
+  // console.log("prprpr", props.search);
 
   // console.log("landing", props.landingData.items && props.landingData.items);
 
   return (
     <Container fluid="true" className="landing-page">
+
       <Row>
         <Col className="landing-right-side mt-5" lg={12}>
           <form
@@ -67,7 +68,7 @@ export default function LandingPage(props) {
           <Row>
             {props.landingData.items &&
               props.landingData.items.map(item => {
-                console.log("item", item);
+                // console.log("item", item);
                 return (
                   <Col lg={6}>
                     <div className="item-repo">

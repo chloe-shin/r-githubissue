@@ -7,7 +7,7 @@ export default function Navigation(props) {
   return (
     <>
       <Navbar bg="dark" variant="dark">
-        <Navbar.Brand href="#home">
+        <Navbar.Brand href="/">
           <img
             src="/img/dog.svg"
             width="30"
