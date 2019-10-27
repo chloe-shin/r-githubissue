@@ -28,7 +28,7 @@ const override = `css
 
 // require("dotenv").config({path: '.env'});
 const clientId = process.env.REACT_APP_CLIENT_ID;
-// console.log("id", clientId);
+console.log("id", clientId);
 function App() {
   const [token, setToken] = useState("");
   const [issues, setIssues] = useState([]);
@@ -36,15 +36,14 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
-  const [openIssues, setOpenIssues] = useState([]);
-  const [closeIssues, setCloseIssues] = useState([]);
+  // const [openIssues, setOpenIssues] = useState([]);
+  // const [closeIssues, setCloseIssues] = useState([]);
   const [comments, setComments] = useState([]);
   const [currentUser, setCurrentUser] = useState();
   const [currentOwner, setCurrentOwner] = useState("");
   const [currentRepo, setCurrentRepo] = useState("");
   const [issueNumber, setIssueNumber] = useState(null);
   const [search, setSearch] = useState("Top repo has more than 100000 stars.");
-
   const [isLanding, setIsLanding] = useState(false);
   const [landingData, setLandingData] = useState([]);
 
@@ -56,10 +55,9 @@ function App() {
     console.log("data", data);
   };
 
-  //this get called from line 167
   const getAPI = async existingToken => {
     //Hai- made url a varible and insert existingToken as a dynamic varible
-    const url = `https://api.github.com/repos/facebook/react/issues`;
+    const url = `https://api.github.com/repos/${currentOwner}/${currentRepo}/issues`;
     const headers = {
       Accept: "application / vnd.github.v3 + json",
       Authorization: `token ${existingToken.split("&")[0]}`
@@ -142,8 +140,8 @@ function App() {
     const headers = {
       Accept: "application / vnd.github.v3 + json"
     };
-    event && event.preventDefault();
-    const url = `https://api.github.com/search/issues?q=${query}?sort=created&order=desc?per_page=20`;
+    // event && event.preventDefault();
+    const url = `https://api.github.com/search/issues?q=${query}&order=desc?per_page=20`;
     const response = await fetch(url, {
       method: "GET",
       headers: headers
@@ -151,22 +149,24 @@ function App() {
     const data = await response.json();
     setIssues(data.items);
 
-    const links = response.headers
-      .get("link")
-      .split(",")
-      .map(url => {
-        return {
-          link: url
-            .split(";")[0]
-            .replace("<", "")
-            .replace(">", ""),
-          value: url
-            .split(";")[1]
-            .trim()
-            .replace('"', "")
-            .replace('"', "")
-        };
-      });
+    const links =
+      response.headers.get("link") &&
+      response.headers
+        .get("link")
+        .split(",")
+        .map(url => {
+          return {
+            link: url
+              .split(";")[0]
+              .replace("<", "")
+              .replace(">", ""),
+            value: url
+              .split(";")[1]
+              .trim()
+              .replace('"', "")
+              .replace('"', "")
+          };
+        });
 
     setPageStatus(links);
   };
@@ -224,24 +224,6 @@ function App() {
       return data;
     } else console.log("there is no number passed in to getComments");
   }; //Hai - start using api
-
-  const getOpenIssues = async () => {
-    // const url = `https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:open&per_page=20`;
-    // const response = await fetch(url);
-    // const openData = await response.json();
-    // setOpenIssues(openData);
-    // console.log ('open issues', openIssues)
-    // setOpenIssues(openissue);
-  };
-
-  const getCloseIssues = async () => {
-    // const url = `https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:closed&per_page=20`;
-    // const response = await fetch(url);
-    // const closeData = await response.json();
-    // setCloseIssues(closeData);
-    // console.log ('cloased issues', closeIssues)
-    // setCloseIssues(closeissue);
-  };
 
   const getLandingRepo = async tok => {
     const url = `https://api.github.com/search/repositories?q=stars:>=100000&fork:false?access_token=${tok}`;
@@ -317,8 +299,6 @@ function App() {
       // getAPI(existingToken);
       getLandingRepo(existingToken.split("&")[0]);
       CurrentUser(existingToken);
-      getOpenIssues();
-      getCloseIssues();
     }
   }, []);
 
@@ -344,7 +324,6 @@ function App() {
               searchRepo={searchRepo}
               token={token}
               getRepoIssues={getRepoIssues}
-              token={token}
               search={search}
               setCurrentOwner={setCurrentOwner}
               setCurrentRepo={setCurrentRepo}
@@ -366,13 +345,9 @@ function App() {
           ) : (
             <Repo
               query={query}
-              closeIssues={closeIssues}
-              openIssues={openIssues}
               issues={issues}
               setIssues={setIssues}
               currentUser={currentUser}
-              // label={label}
-              // getLabel={getLabel}
               currentOwner={currentOwner}
               currentRepo={currentRepo}
               setQuery={setQuery}
@@ -380,6 +355,7 @@ function App() {
               isClear={isClear}
               setIsClear={setIsClear}
               token={token}
+              searchIssues={searchIssues}
             />
           )}
           <PaginationPack

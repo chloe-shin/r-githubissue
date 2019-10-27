@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -19,6 +19,8 @@ import { Tab, Tabs } from "react-bootstrap";
 import moment from "moment";
 import LabelsDisplay from "./LabelsDisplay";
 import { Link } from "react-router-dom";
+import DropDownGrp from "./DropDownGrp";
+import PsudoContainer from "./PsudoContainer";
 
 export default function Repo(props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,13 +30,54 @@ export default function Repo(props) {
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
 
+  const [openIssues, setOpenIssues] = useState(0);
+  const [closeIssues, setCloseIssues] = useState(0);
+
   const headers = {
     "User-Agent": "Mozilla/5.0",
     Authorization: `token ${props.token && props.token.split("&")[0]}`,
     "Content-type": "application/json",
     Accept: "application/vnd.github+json"
   };
-  console.log("repo props", props);
+  useEffect(() => {
+    getOpenIssues(props.currentOwner, props.currentRepo);
+    getCloseIssues(props.currentOwner, props.currentRepo);
+  }, []);
+
+  const getOpenIssues = async (user, repo) => {
+    const token = sessionStorage.getItem("token");
+    const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:open&per_page=20`;
+    const headers = {
+      Accept: "application / vnd.github.v3 + json"
+    };
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers
+    });
+    const openData = await response.json();
+    setOpenIssues(openData);
+    console.log(
+      "open data called by Chloe",
+      openData,
+      'open issues"',
+      openIssues
+    );
+  };
+
+  const getCloseIssues = async (user, repo) => {
+    const token = sessionStorage.getItem("token");
+    const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:closed&per_page=20`;
+    const headers = {
+      Accept: "application / vnd.github.v3 + json"
+    };
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers
+    });
+    const closeData = await response.json();
+    setCloseIssues(closeData);
+  };
+
   const onSubmitIssue = async e => {
     e.preventDefault();
     const url = `https://api.github.com/repos/${props.currentOwner}/${props.currentRepo}/issues`;
@@ -51,27 +94,25 @@ export default function Repo(props) {
     });
   };
 
-  const popover = (
-    <Popover id="popover-basic">
-      <Popover.Title as="h3"> </Popover.Title>
-      <Popover.Content>
-        And here's some <strong>amazing</strong> content. It's very engaging.
-        right?
-      </Popover.Content>
-    </Popover>
-  );
   return (
     <Container>
+      <PsudoContainer
+        currentOwner={props.currentOwner}
+        currentRepo={props.currentRepo}
+      />
       <div className="searchIssue_newIssue">
         <Form
           inline
-          onSubmit={event => props.searchIssues(event)}
+          onSubmit={event => {
+            event.preventDefault();
+            props.searchIssues(event);
+          }}
           onChange={event => props.setQuery(event.target.value)}
         >
           <FormControl
             type="text"
             placeholder="Search all issues.."
-            className=" mr-sm-2"
+            className=" mr-sm-2 searchissue"
           />
           <Button
             className="search-button"
@@ -81,7 +122,7 @@ export default function Repo(props) {
             Submit
           </Button>
           {isClear && (
-            <button onClick={() => props.getAPI()} className="clear-search">
+            <button onClick={() => props.getAPI(props.token)} className="clear-search">
               Clear current search query, filters, and sorts
             </button>
           )}
@@ -96,71 +137,22 @@ export default function Repo(props) {
             <Container>
               <Row>
                 <Col lg={4} className="totalcount">
-                  <a
-                    href="#"
-                    onClick={() => props.setIssues(props.openIssues.items)}
-                  >
+                  <a href="#" onClick={() => props.setIssues(openIssues.items)}>
                     <img className="stateOpen" src="/img/open.svg" />
-                    {props.openIssues &&
-                      props.openIssues.total_count} opened{" "}
+                    {openIssues.total_count} opened{" "}
                   </a>
 
                   <a
                     href="#"
-                    onClick={() => props.setIssues(props.closeIssues.items)}
+                    onClick={() => props.setIssues(closeIssues.items)}
                   >
                     <img className="stateClose2" src="/img/success.svg" />
-                    {props.closeIssues &&
-                      props.closeIssues.total_count} closed{" "}
+                    {closeIssues.total_count} closed{" "}
                   </a>
                 </Col>
                 <Col lg={8}>
-                  <div className="DropdownGrp">
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-button"
-                      title="Author"
-                    >
-                      <Dropdown.Item href="#/action-1">Author</Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Labels "
-                    >
-                      <Dropdown.Item href="#/action-1">Labels </Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Projects"
-                    >
-                      <Dropdown.Item href="#/action-1">Projects</Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Milestone"
-                    >
-                      <Dropdown.Item href="#/action-1">
-                        Milestones
-                      </Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Assignee"
-                    >
-                      <Dropdown.Item href="#/action-1">Assignee</Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Sort"
-                    >
-                      <Dropdown.Item href="#/action-1">Sort</Dropdown.Item>
-                    </DropdownButton>
-                  </div>
+                  {" "}
+                  <DropDownGrp />
                 </Col>
               </Row>
             </Container>
@@ -198,10 +190,9 @@ export default function Repo(props) {
                             </div>
                             <a href="#">
                               {" "}
-                              {item.title} <br />{" "}
-                            </a>{" "}
-                            <br />
-                            <LabelsDisplay labels={item.labels} />
+                              {item.title}
+                              <LabelsDisplay labels={item.labels} />
+                            </a>
                           </Card.Title>
                         </Link>
                         <Card.Text>
@@ -339,7 +330,9 @@ export default function Repo(props) {
             <button
               disabled={!queryTitle}
               className="btn btn-primary"
-              onClick={event => onSubmitIssue(event)}
+              onClick={event => {
+                onSubmitIssue(event);
+              }}
             >
               Submit new issue
             </button>

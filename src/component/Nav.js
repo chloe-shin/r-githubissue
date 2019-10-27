@@ -14,7 +14,7 @@ export default function Navigation(props) {
             height="30"
             className="d-inline-block align-top"
             alt="React Bootstrap logo"
-          />{" "}
+          /> CC HUB
         </Navbar.Brand>
         <Form inline>
           <FormControl
@@ -24,11 +24,11 @@ export default function Navigation(props) {
             className="mr-sm-2 navSearch"
           />
         </Form>
-        <Nav className="mr-auto">
-          <NavLink to="/">Home</NavLink>
-          <NavLink to={`/${currentOwner}/${currentRepo}/issues`}>Repo</NavLink>
-          <NavLink to="/">Marketplace</NavLink>
-          <NavLink to="/">Explore</NavLink>
+        <Nav className="mr-auto navmenu">
+          <NavLink className = "nav" to="/">Home</NavLink>
+          <NavLink className = "nav" to={`/${currentOwner}/${currentRepo}/issues`}>Repo</NavLink>
+          <NavLink className = "nav" to="/">Marketplace</NavLink>
+          <NavLink className = "nav" to="/">Explore</NavLink>
         </Nav>
       </Navbar>
     </>
