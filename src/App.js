@@ -57,7 +57,7 @@ function App() {
 
   const getAPI = async existingToken => {
     //Hai- made url a varible and insert existingToken as a dynamic varible
-    const url = `https://api.github.com/repos/facebook/react/issues`;
+    const url = `https://api.github.com/repos/${currentOwner}/${currentRepo}/issues`;
     const headers = {
       Accept: "application / vnd.github.v3 + json",
       Authorization: `token ${existingToken.split("&")[0]}`
@@ -140,8 +140,8 @@ function App() {
     const headers = {
       Accept: "application / vnd.github.v3 + json"
     };
-    event && event.preventDefault();
-    const url = `https://api.github.com/search/issues?q=${query}?sort=created&order=desc?per_page=20`;
+    // event && event.preventDefault();
+    const url = `https://api.github.com/search/issues?q=${query}&order=desc?per_page=20`;
     const response = await fetch(url, {
       method: "GET",
       headers: headers
@@ -149,22 +149,24 @@ function App() {
     const data = await response.json();
     setIssues(data.items);
 
-    const links = response.headers
-      .get("link")
-      .split(",")
-      .map(url => {
-        return {
-          link: url
-            .split(";")[0]
-            .replace("<", "")
-            .replace(">", ""),
-          value: url
-            .split(";")[1]
-            .trim()
-            .replace('"', "")
-            .replace('"', "")
-        };
-      });
+    const links =
+      response.headers.get("link") &&
+      response.headers
+        .get("link")
+        .split(",")
+        .map(url => {
+          return {
+            link: url
+              .split(";")[0]
+              .replace("<", "")
+              .replace(">", ""),
+            value: url
+              .split(";")[1]
+              .trim()
+              .replace('"', "")
+              .replace('"', "")
+          };
+        });
 
     setPageStatus(links);
   };
@@ -222,7 +224,6 @@ function App() {
       return data;
     } else console.log("there is no number passed in to getComments");
   }; //Hai - start using api
-
 
   const getLandingRepo = async tok => {
     const url = `https://api.github.com/search/repositories?q=stars:>=100000&fork:false?access_token=${tok}`;
@@ -354,6 +355,7 @@ function App() {
               isClear={isClear}
               setIsClear={setIsClear}
               token={token}
+              searchIssues={searchIssues}
             />
           )}
           <PaginationPack
@@ -363,7 +365,6 @@ function App() {
             setIsLoading={setIsLoading}
             token={token}
           />
-          )}
         </Route>
         <Route
           exact
@@ -377,6 +378,7 @@ function App() {
                 setIssueNumber={setIssueNumber}
                 currentUser={currentUser}
                 token={token}
+                getComments={getComments}
               />
             </>
           }

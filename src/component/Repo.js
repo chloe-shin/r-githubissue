@@ -29,7 +29,7 @@ export default function Repo(props) {
   const [queryText, setQueryText] = useState("");
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
-  
+
   const [openIssues, setOpenIssues] = useState(0);
   const [closeIssues, setCloseIssues] = useState(0);
 
@@ -42,11 +42,10 @@ export default function Repo(props) {
   useEffect(() => {
     getOpenIssues(props.currentOwner, props.currentRepo);
     getCloseIssues(props.currentOwner, props.currentRepo);
- }, []);
-  
+  }, []);
 
   const getOpenIssues = async (user, repo) => {
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem("token");
     const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:open&per_page=20`;
     const headers = {
       Accept: "application / vnd.github.v3 + json"
@@ -57,11 +56,16 @@ export default function Repo(props) {
     });
     const openData = await response.json();
     setOpenIssues(openData);
-    console.log ('open data called by Chloe', openData, 'open issues"',openIssues)
+    console.log(
+      "open data called by Chloe",
+      openData,
+      'open issues"',
+      openIssues
+    );
   };
-  
+
   const getCloseIssues = async (user, repo) => {
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem("token");
     const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:closed&per_page=20`;
     const headers = {
       Accept: "application / vnd.github.v3 + json"
@@ -73,7 +77,6 @@ export default function Repo(props) {
     const closeData = await response.json();
     setCloseIssues(closeData);
   };
-
 
   const onSubmitIssue = async e => {
     e.preventDefault();
@@ -94,13 +97,16 @@ export default function Repo(props) {
   return (
     <Container>
       <PsudoContainer
-       currentOwner = {props.currentOwner} 
-       currentRepo = {props.currentRepo}
+        currentOwner={props.currentOwner}
+        currentRepo={props.currentRepo}
       />
       <div className="searchIssue_newIssue">
         <Form
           inline
-          onSubmit={event => props.searchIssues(event)}
+          onSubmit={event => {
+            event.preventDefault();
+            props.searchIssues(event);
+          }}
           onChange={event => props.setQuery(event.target.value)}
         >
           <FormControl
@@ -116,7 +122,7 @@ export default function Repo(props) {
             Submit
           </Button>
           {isClear && (
-            <button onClick={() => props.getAPI()} className="clear-search">
+            <button onClick={() => props.getAPI(props.token)} className="clear-search">
               Clear current search query, filters, and sorts
             </button>
           )}
@@ -131,10 +137,7 @@ export default function Repo(props) {
             <Container>
               <Row>
                 <Col lg={4} className="totalcount">
-                  <a
-                    href="#"
-                    onClick={() => props.setIssues(openIssues.items)}
-                  >
+                  <a href="#" onClick={() => props.setIssues(openIssues.items)}>
                     <img className="stateOpen" src="/img/open.svg" />
                     {openIssues.total_count} opened{" "}
                   </a>
@@ -146,10 +149,11 @@ export default function Repo(props) {
                     <img className="stateClose2" src="/img/success.svg" />
                     {closeIssues.total_count} closed{" "}
                   </a>
-                  </Col>
-                 <Col lg= {8}> <DropDownGrp/>
-                 </Col>
-                
+                </Col>
+                <Col lg={8}>
+                  {" "}
+                  <DropDownGrp />
+                </Col>
               </Row>
             </Container>
           </div>
@@ -172,9 +176,15 @@ export default function Repo(props) {
                           <Card.Title>
                             <div className="State">
                               {item.state === "open" ? (
-                                <img className="stateOpen" src="/img/open.svg"/>
+                                <img
+                                  className="stateOpen"
+                                  src="/img/open.svg"
+                                />
                               ) : (
-                                <img className="stateClose" src="/img/success.svg"/>
+                                <img
+                                  className="stateClose"
+                                  src="/img/success.svg"
+                                />
                               )}{" "}
                               <br />
                             </div>
@@ -183,9 +193,7 @@ export default function Repo(props) {
                               {item.title}
                               <LabelsDisplay labels={item.labels} />
                             </a>
-                            
                           </Card.Title>
-                          
                         </Link>
                         <Card.Text>
                           #{item.number} {item.state}{" "}
@@ -266,7 +274,7 @@ export default function Repo(props) {
                 href={props.html_user}
                 target="_blank"
               >
-                <img className="avatar" src= {props.avatar_url} alt="avata" />
+                <img className="avatar" src={props.avatar_url} alt="avata" />
               </a>
             </span>
             <div className="comment">
@@ -322,7 +330,9 @@ export default function Repo(props) {
             <button
               disabled={!queryTitle}
               className="btn btn-primary"
-              onClick={event => onSubmitIssue(event)}
+              onClick={event => {
+                onSubmitIssue(event);
+              }}
             >
               Submit new issue
             </button>
