@@ -19,6 +19,8 @@ import { Tab, Tabs } from "react-bootstrap";
 import moment from "moment";
 import LabelsDisplay from "./LabelsDisplay";
 import { Link } from "react-router-dom";
+import DropDownGrp from "./DropDownGrp";
+import PsudoContainer from "./PsudoContainer";
 
 export default function Repo(props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,8 +30,8 @@ export default function Repo(props) {
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
   
-  const [openIssuesCount, setOpenIssuesCount] = useState(0);
-  const [closeIssuesCount, setCloseIssuesCount] = useState(0);
+  const [openIssues, setOpenIssues] = useState(0);
+  const [closeIssues, setCloseIssues] = useState(0);
 
   const headers = {
     "User-Agent": "Mozilla/5.0",
@@ -45,7 +47,7 @@ export default function Repo(props) {
 
   const getOpenIssues = async (user, repo) => {
     const token = sessionStorage.getItem('token');
-    const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:open&per_page=20&access_token=${token}`;
+    const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:open&per_page=20`;
     const headers = {
       Accept: "application / vnd.github.v3 + json"
     };
@@ -54,13 +56,13 @@ export default function Repo(props) {
       headers: headers
     });
     const openData = await response.json();
-    setOpenIssuesCount(openData.total_count);
-    console.log ('open issues called by beautiful Chloe', user, repo, openData)
+    setOpenIssues(openData);
+    console.log ('open data called by Chloe', openData, 'open issues"',openIssues)
   };
   
   const getCloseIssues = async (user, repo) => {
     const token = sessionStorage.getItem('token');
-    const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:closed&per_page=20&access_token=${token}`;
+    const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:closed&per_page=20`;
     const headers = {
       Accept: "application / vnd.github.v3 + json"
     };
@@ -69,13 +71,13 @@ export default function Repo(props) {
       headers: headers
     });
     const closeData = await response.json();
-    setCloseIssuesCount(closeData.total_count);
+    setCloseIssues(closeData);
   };
 
 
   const onSubmitIssue = async e => {
     e.preventDefault();
-    const url = `https://api.github.com/repos/nakasaky55/fake-imdb/issues`;
+    const url = `https://api.github.com/repos/${props.currentOwner}/${props.currentRepo}/issues`;
 
     const post = await fetch(url, {
       method: "POST",
@@ -91,6 +93,10 @@ export default function Repo(props) {
 
   return (
     <Container>
+      <PsudoContainer
+       currentOwner = {props.currentOwner} 
+       currentRepo = {props.currentRepo}
+      />
       <div className="searchIssue_newIssue">
         <Form
           inline
@@ -100,7 +106,7 @@ export default function Repo(props) {
           <FormControl
             type="text"
             placeholder="Search all issues.."
-            className=" mr-sm-2"
+            className=" mr-sm-2 searchissue"
           />
           <Button
             className="search-button"
@@ -127,68 +133,23 @@ export default function Repo(props) {
                 <Col lg={4} className="totalcount">
                   <a
                     href="#"
-                    onClick={() => props.setIssues(props.openIssues.items)}
+                    onClick={() => props.setIssues(openIssues.items)}
                   >
                     <img className="stateOpen" src="/img/open.svg" />
-                    {openIssuesCount} opened{" "}
+                    {openIssues.total_count} opened{" "}
                   </a>
 
                   <a
                     href="#"
-                    onClick={() => props.setIssues(props.closeIssues.items)}
+                    onClick={() => props.setIssues(closeIssues.items)}
                   >
                     <img className="stateClose2" src="/img/success.svg" />
-                    {closeIssuesCount} closed{" "}
+                    {closeIssues.total_count} closed{" "}
                   </a>
-                </Col>
-                <Col lg={8}>
-                  <div className="DropdownGrp">
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-button"
-                      title="Author"
-                    >
-                      <Dropdown.Item href="#/action-1">Author</Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Labels "
-                    >
-                      <Dropdown.Item href="#/action-1">Labels </Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Projects"
-                    >
-                      <Dropdown.Item href="#/action-1">Projects</Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Milestone"
-                    >
-                      <Dropdown.Item href="#/action-1">
-                        Milestones
-                      </Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Assignee"
-                    >
-                      <Dropdown.Item href="#/action-1">Assignee</Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Sort"
-                    >
-                      <Dropdown.Item href="#/action-1">Sort</Dropdown.Item>
-                    </DropdownButton>
-                  </div>
-                </Col>
+                  </Col>
+                 <Col lg= {8}> <DropDownGrp/>
+                 </Col>
+                
               </Row>
             </Container>
           </div>
@@ -219,11 +180,12 @@ export default function Repo(props) {
                             </div>
                             <a href="#">
                               {" "}
-                              {item.title} <br />{" "}
-                            </a>{" "}
-                            <br />
-                            <LabelsDisplay labels={item.labels} />
+                              {item.title}
+                              <LabelsDisplay labels={item.labels} />
+                            </a>
+                            
                           </Card.Title>
+                          
                         </Link>
                         <Card.Text>
                           #{item.number} {item.state}{" "}
@@ -304,7 +266,7 @@ export default function Repo(props) {
                 href={props.html_user}
                 target="_blank"
               >
-                <img className="avatar" src={props.avatar_url} alt="avata" />
+                <img className="avatar" src= {props.avatar_url} alt="avata" />
               </a>
             </span>
             <div className="comment">

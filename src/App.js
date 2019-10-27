@@ -10,6 +10,7 @@ import PaginationPack from "./component/Pagination";
 // import { default as localIssues } from "./utils";
 // import { closeissue, openissue } from "./utils";
 // import { comments as localComments } from "./utils";
+import { Form, FormControl, Button } from "react-bootstrap";
 import LandingPage from "./component/LandingPage";
 import {
   BrowserRouter as Router,
@@ -39,8 +40,8 @@ function App() {
   // const [closeIssues, setCloseIssues] = useState([]);
   const [comments, setComments] = useState([]);
   const [currentUser, setCurrentUser] = useState();
-  const [currentOwner, setCurrentOwner] = useState("facebook");
-  const [currentRepo, setCurrentRepo] = useState("react");
+  const [currentOwner, setCurrentOwner] = useState("");
+  const [currentRepo, setCurrentRepo] = useState("");
   const [issueNumber, setIssueNumber] = useState(null);
   const [search, setSearch] = useState("Top repo has more than 100000 stars.");
   const [isLanding, setIsLanding] = useState(false);
@@ -51,6 +52,7 @@ function App() {
     const response = await fetch(url);
     const data = await response.json();
     setCurrentUser(data);
+    console.log("data", data);
   };
 
   const getAPI = async existingToken => {
@@ -69,7 +71,7 @@ function App() {
     const jsonData = await response.json();
     // const urls = response.headers.get("link").split(",").map(item=>item.split(";")[0].replace("<","").replace(">",""));
     // console.log(urls)
-    console.log(response.headers.get("link"));
+    console.log("issue", issues);
     const links =
       response.headers.get("link") &&
       response.headers
@@ -128,7 +130,7 @@ function App() {
               .replace('"', "")
           };
         });
-    console.log("json", jsonData);
+
     setPageStatus(links);
     setIssues(jsonData);
     setIsLoading(false);
@@ -201,13 +203,18 @@ function App() {
     }
   };
 
-  console.log("token", search);
+  // console.log("token", search);
 
   //function to get all the comments of the current Issue from api
   const getComments = async number => {
     if (number && token) {
       const response = await fetch(
-        `https://api.github.com/repos/facebook/react/issues/${number}/comments?access_token=${token}`
+        `https://api.github.com/repos/${currentOwner}/${currentRepo}/issues/${number}/comments`,
+        {
+          headers: {
+            Authorization: `token ${token}`
+          }
+        }
       );
       const data = await response.json();
       setComments(data);
@@ -240,7 +247,7 @@ function App() {
     const jsonData = await response.json();
     // const urls = response.headers.get("link").split(",").map(item=>item.split(";")[0].replace("<","").replace(">",""));
     // console.log(urls)
-    console.log(response.headers.get("link"));
+
     const links =
       response.headers.get("link") &&
       response.headers
@@ -307,7 +314,7 @@ function App() {
   return (
     <Router>
       {/* Search for issues (within Repo.js) */}
-      <Nav currentOwner={currentOwner} currentRepo={currentRepo} />
+
       <Switch>
         <Route path="/" exact>
           <div>
@@ -317,10 +324,13 @@ function App() {
               token={token}
               getRepoIssues={getRepoIssues}
               search={search}
+              setCurrentOwner={setCurrentOwner}
+              setCurrentRepo={setCurrentRepo}
             />
           </div>
         </Route>
         <Route exact path={`/:owner/:repo/issues`} exact>
+          <Nav currentOwner={currentOwner} currentRepo={currentRepo} />
           {isLoading ? (
             <div className="sweet-loading">
               <RingLoader
@@ -359,13 +369,16 @@ function App() {
           exact
           path={`/:owner/:repo/issues/:number`}
           children={
-            <Issues
-              issues={issues}
-              comments={comments}
-              setIssueNumber={setIssueNumber}
-              currentUser={currentUser}
-              token={token}
-            />
+            <>
+              <Nav currentOwner={currentOwner} currentRepo={currentRepo} />
+              <Issues
+                issues={issues}
+                comments={comments}
+                setIssueNumber={setIssueNumber}
+                currentUser={currentUser}
+                token={token}
+              />
+            </>
           }
         />
         <Route path="/">

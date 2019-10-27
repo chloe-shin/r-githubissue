@@ -349,6 +349,31 @@ a {
 }
 
 /* Chloe */
+.contribute {
+  font-weight: 500;
+  font-size: 16px;
+}
+.psudolink {
+  color: blue;
+}
+.psudo {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+  padding: 30px;
+  text-align: center;
+}
+
+.searchissue {
+  width: 400px !important;
+}
+.nav {
+  color: white !important;
+  padding: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+
 
 .labels {
   --switch: calc((var(--light) - var(--threshold)) * -100%) !important;
@@ -635,7 +660,7 @@ textarea {
   margin-top: 10vh;
   text-align: center;
 }
-.landing-right-side {
+.landing-right-side form{
   min-height: 20vh;
   /* background-color: white; */
   /* border: 1px solid white; */
@@ -675,8 +700,8 @@ textarea {
   font-size: 14px;
 }
 
-.landing-right-side > input {
-  width: 60%;
+.landing-right-side input {
+  width: 50%;
   height: 30px;
   border-radius: 6px;
   border: none;
@@ -684,7 +709,7 @@ textarea {
   transition: 0.5s ease-in-out;
 }
 
-.landing-right-side > input:focus {
+.landing-right-side input:focus {
   box-shadow: inset 0 0 0 3px #fff, 0 0 0 4px #fff, 3px -3px 30px #1beabd,
     -3px 3px 30px #10abff;
   transition: 0.5s ease-in-out;

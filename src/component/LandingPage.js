@@ -3,12 +3,12 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faCoffee } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
-import {Link} from "react-router-dom"
-// import PaginationPack from "./Pagination";
+import { Link } from "react-router-dom";
+import PaginationPack from "./Pagination";
 
 export default function LandingPage(props) {
   const [query, setQuery] = useState("");
-  console.log("prprpr", props.search)
+  console.log("prprpr", props.search);
 
   // console.log("landing", props.landingData.items && props.landingData.items);
 
@@ -16,17 +16,25 @@ export default function LandingPage(props) {
     <Container fluid="true" className="landing-page">
       <Row>
         <Col className="landing-right-side" lg={12}>
-          <h3>Find your destination</h3>
-          <input
-            onChange={event => setQuery(event.target.value)}
-            placeholder="Enter your curious"
-          ></input>
-          <Button
-            className="landing-button"
-            onClick={() => props.searchRepo(query, props.token)}
+          <form
+            onSubmit={event => {
+              event.preventDefault();
+              props.searchRepo(query, props.token);
+            }}
           >
-            Find
-          </Button>
+            <h3>Find your destination</h3>
+            <input
+              onChange={event => setQuery(event.target.value)}
+              placeholder="Enter your curious"
+            ></input>
+            <Button
+              type="submit"
+              className="landing-button"
+              onClick={() => props.searchRepo(query, props.token)}
+            >
+              Find
+            </Button>
+          </form>
         </Col>
         <Col className="landing-left-side" lg={12}>
           <h2></h2>
@@ -37,10 +45,15 @@ export default function LandingPage(props) {
                 return (
                   <Col lg={6}>
                     <div className="item-repo">
-                      <Link
-                        to={`/${item.full_name}/issues`}
-                      >
-                        <span className="span-custom" onClick={() => props.getRepoIssues(item.full_name, props.token)}>
+                      <Link to={`/${item.full_name}/issues`}>
+                        <span
+                          className="span-custom"
+                          onClick={() => {
+                            props.getRepoIssues(item.full_name, props.token);
+                            props.setCurrentOwner(item.full_name.split("/")[0]);
+                            props.setCurrentRepo(item.full_name.split("/")[1]);
+                          }}
+                        >
                           {item && item.full_name}
                         </span>
                       </Link>
