@@ -349,6 +349,31 @@ a {
 }
 
 /* Chloe */
+.contribute {
+  font-weight: 500;
+  font-size: 16px;
+}
+.psudolink {
+  color: blue;
+}
+.psudo {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+  padding: 30px;
+  text-align: center;
+}
+
+.searchissue {
+  width: 400px !important;
+}
+.nav {
+  color: white !important;
+  padding: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+
 
 .labels {
   --switch: calc((var(--light) - var(--threshold)) * -100%) !important;
