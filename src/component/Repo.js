@@ -49,214 +49,264 @@ export default function Repo(props) {
   return (
     <Container>
       <div className="searchIssue_newIssue">
-        <Form
-          inline
-          onSubmit={event => props.searchIssues(event)}
-          onChange={event => props.setQuery(event.target.value)}
-        >
-          <FormControl
-            type="text"
-            placeholder=" Search all issues.."
-            className=" mr-sm-2"
-          />
-          <i class="fab fa-searchengin"></i>
-
-          <Button
-            className="search-button"
-            type="submit"
-            // onClick={() => setIsClear(!false)}
+        {props.isError ? (
+          ""
+        ) : (
+          <Form
+            inline
+            onSubmit={event => {
+              event.preventDefault();
+              props.searchIssues(event);
+            }}
+            onChange={event => {event.preventDefault();props.setQuery(event.target.value)}}
           >
-            > Submit
-          </Button>
-        </Form>
+            <FormControl
+              type="text"
+              placeholder=" Search all issues.."
+              className=" mr-sm-2"
+            />
+            <i class="fab fa-searchengin"></i>
+
+            <Button
+              className="search-button"
+              type="submit"
+              // onClick={() => setIsClear(!false)}
+            >
+              > Submit
+            </Button>
+          </Form>
+        )}
         <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
           New issue
         </button>
       </div>
+
       <div>
         {props.isClear && (
           <button onClick={() => refreshPage()} className="clear-search">
             <i class="fas fa-times-circle"></i> Clear current search query,
-            filters, and sorts [ {props.query} ]
+            filters, and sorts:{" "}
+            <u>
+              <b>{props.query}</b>
+            </u>
           </button>
         )}
       </div>
-      <Row>
-        <Col lg={12}>
-          <div className="top">
-            <Container>
-              <Row>
-                <Col lg={4} className="totalcount">
-                  <a
-                    href="#"
-                    onClick={() => props.setIssues(props.openIssues.items)}
-                  >
-                    <img className="stateOpen" src="img/open.svg" />
-                    {props.openIssues &&
-                      props.openIssues.total_count} opened{" "}
-                  </a>
+      {props.isError ? (
+        <Card className="error-message-issue">
+          <Card.Body>
+            <Card.Title className="noResult-title">
+              No results matched your search
+            </Card.Title>
+            <Card.Text>
+              You could return to your repo here and try another search
+            </Card.Text>
+            <Button variant="primary" onClick={() => refreshPage()}>
+              Back to previous repository
+            </Button>
+          </Card.Body>
+        </Card>
+      ) : (
+        <>
+          <Row>
+            <Col lg={12}>
+              <div className="top">
+                <Container>
+                  <Row>
+                    <Col lg={4} className="totalcount">
+                      <a
+                        href="#"
+                        onClick={() => props.setIssues(props.openIssues.items)}
+                      >
+                        <img className="stateOpen" src="img/open.svg" />
+                        {props.openIssues && props.openIssues.total_count}{" "}
+                        opened{" "}
+                      </a>
 
-                  <a
-                    href="#"
-                    onClick={() => props.setIssues(props.closeIssues.items)}
-                  >
-                    <img className="stateClose2" src="img/success.svg" />
-                    {props.closeIssues &&
-                      props.closeIssues.total_count} closed{" "}
-                  </a>
-                </Col>
-                <Col lg={8}>
-                  <div className="DropdownGrp">
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-button"
-                      title="Author"
-                    >
-                      <Dropdown.Item href="#/action-1">Author</Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Labels "
-                    >
-                      <Dropdown.Item href="#/action-1">Labels </Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Projects"
-                    >
-                      <Dropdown.Item href="#/action-1">Projects</Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Milestone"
-                    >
-                      <Dropdown.Item href="#/action-1">
-                        Milestones
-                      </Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Assignee"
-                    >
-                      <Dropdown.Item href="#/action-1">Assignee</Dropdown.Item>
-                    </DropdownButton>
-                    <DropdownButton
-                      bsPrefix={"default"}
-                      id="dropdown-basic-button"
-                      title="Sort"
-                    >
-                      <Dropdown.Item href="#/action-1">Sort</Dropdown.Item>
-                    </DropdownButton>
-                  </div>
-                </Col>
-              </Row>
-            </Container>
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        {props.issues &&
-          props.issues.map(item => {
-            // console.log("issue, listen to charles", item);
-            return (
-              <Col key={`issue#${item.number}`} lg={12}>
-                <Card>
-                  <Row className="cardrow">
-                    <Col lg={10}>
-                      <Card.Body>
-                        <Link
-                          to={`/${props.currentOwner}/${props.currentRepo}/issues/${item.number}`}
-                        >
-                          <Card.Title>
-                            <div className="State">
-                              {item.state === "open" ? (
-                                <img className="stateOpen" src="img/open.svg" />
-                              ) : (
-                                <img
-                                  className="stateClose"
-                                  src="img/success.svg"
-                                />
-                              )}{" "}
-                              <br />
-                            </div>
-                            <a href="#">
-                              {" "}
-                              {item.title}
-                              <br />{" "}
-                            </a>{" "}
-                            <br />
-                            <LabelsDisplay labels={item.labels} />
-                          </Card.Title>
-                        </Link>
-                        <Card.Text>
-                          #{item.number} {item.state}{" "}
-                          {moment(item.updated_at)
-                            .startOf("day")
-                            .fromNow()}{" "}
-                          by
-                          <OverlayTrigger
-                            trigger="hover"
-                            placement="right"
-                            overlay={
-                              <Popover id="popover-basic">
-                                <Popover.Title as="h3">
-                                  <img
-                                    className="popOverimg"
-                                    src={item.user.avatar_url}
-                                  />
-                                  <strong>{item.user.login}</strong>
-                                </Popover.Title>
-                                <Popover.Content></Popover.Content>
-                              </Popover>
-                            }
-                          >
-                            <a href={item.user.html_url}> {item.user.login} </a>
-                          </OverlayTrigger>
-                          <br />
-                        </Card.Text>
-                      </Card.Body>
+                      <a
+                        href="#"
+                        onClick={() => props.setIssues(props.closeIssues.items)}
+                      >
+                        <img className="stateClose2" src="img/success.svg" />
+                        {props.closeIssues &&
+                          props.closeIssues.total_count}{" "}
+                        closed{" "}
+                      </a>
                     </Col>
-
-                    <Col lg={2}>
-                      <div className="User">
-                        <img className="avatar" src={item.user.avatar_url} />
-                        <OverlayTrigger
-                          trigger="hover"
-                          placement="left"
-                          overlay={
-                            <Popover id="popover-basic">
-                              <Popover.Title as="h3">
-                                <img
-                                  className="popOverimg"
-                                  src={item.user.avatar_url}
-                                />
-                                <strong>{item.user.login}</strong>
-                              </Popover.Title>
-                              <Popover.Content>
-                                {item.user.site_admin}
-                              </Popover.Content>
-                            </Popover>
-                          }
+                    <Col lg={8}>
+                      <div className="DropdownGrp">
+                        <DropdownButton
+                          bsPrefix={"default"}
+                          id="dropdown-button"
+                          title="Author"
                         >
-                          <a href={item.user.html_url}> {item.user.login} </a>
-                        </OverlayTrigger>
-
-                        <div className="comment-chloe">
-                          <i class="fas fa-comment"></i>
-                          {item.comments}
-                        </div>
+                          <Dropdown.Item href="#/action-1">
+                            Author
+                          </Dropdown.Item>
+                        </DropdownButton>
+                        <DropdownButton
+                          bsPrefix={"default"}
+                          id="dropdown-basic-button"
+                          title="Labels "
+                        >
+                          <Dropdown.Item href="#/action-1">
+                            Labels{" "}
+                          </Dropdown.Item>
+                        </DropdownButton>
+                        <DropdownButton
+                          bsPrefix={"default"}
+                          id="dropdown-basic-button"
+                          title="Projects"
+                        >
+                          <Dropdown.Item href="#/action-1">
+                            Projects
+                          </Dropdown.Item>
+                        </DropdownButton>
+                        <DropdownButton
+                          bsPrefix={"default"}
+                          id="dropdown-basic-button"
+                          title="Milestone"
+                        >
+                          <Dropdown.Item href="#/action-1">
+                            Milestones
+                          </Dropdown.Item>
+                        </DropdownButton>
+                        <DropdownButton
+                          bsPrefix={"default"}
+                          id="dropdown-basic-button"
+                          title="Assignee"
+                        >
+                          <Dropdown.Item href="#/action-1">
+                            Assignee
+                          </Dropdown.Item>
+                        </DropdownButton>
+                        <DropdownButton
+                          bsPrefix={"default"}
+                          id="dropdown-basic-button"
+                          title="Sort"
+                        >
+                          <Dropdown.Item href="#/action-1">Sort</Dropdown.Item>
+                        </DropdownButton>
                       </div>
                     </Col>
                   </Row>
-                </Card>
-              </Col>
-            );
-          })}
-      </Row>
+                </Container>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            {props.issues &&
+              props.issues.map(item => {
+                // console.log("issue, listen to charles", item);
+                return (
+                  <Col key={`issue#${item.number}`} lg={12}>
+                    <Card>
+                      <Row className="cardrow">
+                        <Col lg={10}>
+                          <Card.Body>
+                            <Link
+                              to={`/${props.currentOwner}/${props.currentRepo}/issues/${item.number}`}
+                            >
+                              <Card.Title>
+                                <div className="State">
+                                  {item.state === "open" ? (
+                                    <img
+                                      className="stateOpen"
+                                      src="img/open.svg"
+                                    />
+                                  ) : (
+                                    <img
+                                      className="stateClose"
+                                      src="img/success.svg"
+                                    />
+                                  )}{" "}
+                                  <br />
+                                </div>
+                                <a href="#">
+                                  {" "}
+                                  {item.title}
+                                  <br />{" "}
+                                </a>{" "}
+                                <br />
+                                <LabelsDisplay labels={item.labels} />
+                              </Card.Title>
+                            </Link>
+                            <Card.Text>
+                              #{item.number} {item.state}{" "}
+                              {moment(item.updated_at)
+                                .startOf("day")
+                                .fromNow()}{" "}
+                              by
+                              <OverlayTrigger
+                                trigger="hover"
+                                placement="right"
+                                overlay={
+                                  <Popover id="popover-basic">
+                                    <Popover.Title as="h3">
+                                      <img
+                                        className="popOverimg"
+                                        src={item.user.avatar_url}
+                                      />
+                                      <strong>{item.user.login}</strong>
+                                    </Popover.Title>
+                                    <Popover.Content></Popover.Content>
+                                  </Popover>
+                                }
+                              >
+                                <a href={item.user.html_url}>
+                                  {" "}
+                                  {item.user.login}{" "}
+                                </a>
+                              </OverlayTrigger>
+                              <br />
+                            </Card.Text>
+                          </Card.Body>
+                        </Col>
+
+                        <Col lg={2}>
+                          <div className="User">
+                            <img
+                              className="avatar"
+                              src={item.user.avatar_url}
+                            />
+                            <OverlayTrigger
+                              trigger="hover"
+                              placement="left"
+                              overlay={
+                                <Popover id="popover-basic">
+                                  <Popover.Title as="h3">
+                                    <img
+                                      className="popOverimg"
+                                      src={item.user.avatar_url}
+                                    />
+                                    <strong>{item.user.login}</strong>
+                                  </Popover.Title>
+                                  <Popover.Content>
+                                    {item.user.site_admin}
+                                  </Popover.Content>
+                                </Popover>
+                              }
+                            >
+                              <a href={item.user.html_url}>
+                                {" "}
+                                {item.user.login}{" "}
+                              </a>
+                            </OverlayTrigger>
+
+                            <div className="comment-chloe">
+                              <i class="fas fa-comment"></i>
+                              {item.comments}
+                            </div>
+                          </div>
+                        </Col>
+                      </Row>
+                    </Card>
+                  </Col>
+                );
+              })}
+          </Row>
+        </>
+      )}
 
       <Modal
         className="popupIssues"

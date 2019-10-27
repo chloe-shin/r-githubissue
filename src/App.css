@@ -618,6 +618,18 @@ a {
   font-size: 18px;
 }
 
+.error-message-issue {
+  width: 70rem;
+  height: 23rem;
+  margin-left: 0%;
+  text-align: center;
+  justify-content: center;
+  padding-top: 5rem;
+}
+
+.noResult-title {
+  padding-left: 25rem;
+}
 /* END CUONG */
 
 .pagination {

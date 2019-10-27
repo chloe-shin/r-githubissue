@@ -40,6 +40,7 @@ function App() {
   const [currentOwner, setCurrentOwner] = useState("facebook");
   const [currentRepo, setCurrentRepo] = useState("react");
   const [issueNumber, setIssueNumber] = useState(null);
+  const [isError, setIsError] = useState(false);
 
   const CurrentUser = async passedToken => {
     const url = `https://api.github.com/user?access_token=${passedToken}`;
@@ -87,6 +88,11 @@ function App() {
     setIsLoading(false);
   };
 
+  // const searchFalse = event => {
+  //     event && event.preventDefault();
+  //     if (issues.total_count === 0) {
+  //       (setIsError(!false))}}
+
   const searchIssues = async event => {
     const headers = {
       Accept: "application / vnd.github.v3 + json"
@@ -101,6 +107,12 @@ function App() {
     const data = await response.json();
     setIssues(data.items);
     setIsClear(!false);
+
+    if (data.total_count === 0) {
+      return setIsError(!false);
+    } else {
+      setIssues(data.items);
+    }
 
     const links = response.headers
       .get("link")
@@ -232,14 +244,20 @@ function App() {
               isClear={isClear}
               setIsClear={setIsClear}
               searchIssues={searchIssues}
+              isError={isError}
+              setIsError={setIsError}
+              // searchFalse={searchFalse}
             />
           )}
-          <PaginationPack
-            pageStatus={pageStatus && pageStatus}
-            setIssues={setIssues}
-            getAPI={getAPI}
-            setIsLoading={setIsLoading}
-          />
+          {isError ? (
+            ""
+          ) : (
+            <PaginationPack
+              pageStatus={pageStatus && pageStatus}
+              setIssues={setIssues}
+              getAPI={getAPI}
+              setIsLoading={setIsLoading}
+            />
           )}
         </Route>
         <Route
