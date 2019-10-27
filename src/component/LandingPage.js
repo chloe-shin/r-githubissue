@@ -14,15 +14,7 @@ export default function LandingPage(props) {
 
   return (
     <Container fluid="true" className="landing-page">
-      <Row fluid="true" className="logoRowLP">
-        <img
-          src="/img/dog.svg"
-          width="30"
-          height="30"
-          className="d-inline-block align-top logoLandingPage"
-          alt="React Bootstrap logo"
-        /> <h1 className="titleLandingPage">CC HUB</h1>
-      </Row>
+
       <Row>
         <Col className="landing-right-side mt-5" lg={12}>
           <form

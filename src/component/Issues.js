@@ -6,7 +6,7 @@ import { Link, useParams, useHistory, useLocation } from "react-router-dom";
 
 export default function Issues(props) {
   const [issue, setIssue] = useState({});
-  let { issues, comments, setIssueNumber, currentUser, currentIssue } = props;
+  let { issues, comments, currentUser, getComments } = props;
   let { owner, repo, number } = useParams();
   const [commentBox, setComment] = useState("");
   const [defaultValue, setDefaultValue] = useState("");
@@ -44,7 +44,7 @@ export default function Issues(props) {
   };
   const submitIssue = async comment => {
     const result = await postComment(comment);
-    props.getComments(number);
+    getComments(owner, repo, number);
     // alert("res", result)
     setComment("");
   };
@@ -78,36 +78,122 @@ export default function Issues(props) {
             <div className="rightCol"></div>
           </Row>
           <hr />
-          <Row className="container-fluid m-0 singleDisscusion">
-            <img
-              lg={1}
-              src={issue.user.avatar_url}
-              className="avatarIssue"
-              alt={`${issue.user.login}'s avatar`}
-            />
-            <Col className="col discussionBox">
-              <div className="discussionHeader">
-                <span>
-                  <strong>{issue.user.login}</strong> commented{" "}
-                  <span>
-                    {moment(issue.created_at)
-                      .startOf("day")
-                      .fromNow()}
-                  </span>
+          <Row fluid={true}>
+            <Col>
+              <Row className="container-fluid m-0 singleDisscusion">
+                <img
+                  lg={1}
+                  src={issue.user.avatar_url}
+                  className="avatarIssue"
+                  alt={`${issue.user.login}'s avatar`}
+                />
+                <Col className="col discussionBox">
+                  <div className="discussionHeader">
+                    <span>
+                      <strong>{issue.user.login}</strong> commented{" "}
+                      <span>
+                        {moment(issue.created_at)
+                          .startOf("day")
+                          .fromNow()}
+                      </span>
+                    </span>
+                    <span className="toTheRight emoji">
+                      + <i className="far fa-dizzy"></i> •••
+                    </span>
+                  </div>
+                  <div className="discussionBody">
+                    <ReactMarkdown
+                      source={issue.body}
+                      escapeHtml={false}
+                      id="issueBody"
+                    ></ReactMarkdown>
+                  </div>
+                </Col>
+              </Row>
+              {comments.length > 0 &&
+                comments.map(comment => {
+                  return (
+                    <>
+                      <Row className="timeLine m-0"></Row>
+                      <Row
+                        className="container-fluid m-0 singleDisscusion"
+                        key={comment.id}
+                      >
+                        <img
+                          src={comment.user.avatar_url}
+                          className="avatarIssue"
+                          alt={`${comment.user.login}'s avatar`}
+                        />
+                        <Col className="discussionBox">
+                          <div className="discussionHeader">
+                            <span>
+                              <strong>{comment.user.login}</strong> commented{" "}
+                              <span>{moment(comment.created_at).fromNow()}</span>
+                            </span>
+                            <span className="toTheRight emoji">
+                              {comment.author_association !== "NONE" && (
+                                <span className="author">
+                                  comment.author_associatio{" "}
+                                </span>
+                              )}
+                              {comment.user.login === issue.user.login && (
+                                <span className="author">AUTHOR</span>
+                              )}
+                              + <i className="far fa-dizzy"></i> •••
+                            </span>
+                          </div>
+                          <div className="discussionBody">
+                            <ReactMarkdown
+                              source={comment.body}
+                              escapeHtml={false}
+                              id="commentBody"
+                            ></ReactMarkdown>
+                          </div>
+                        </Col>
+                      </Row>
+                    </>
+                  );
+                })}
+              <Row className="timeLine m-0" height="30px"></Row>
+              {issue.state === "closed" && (
+                <span className="closeBadge">
+                  <i class="fas fa-times-circle text-danger"></i>
+                  <img
+                    src={issue.user.avatar_url}
+                    alt="author avatar"
+                    height="20px"
+                    className="avatarClosed"
+                  />
+                  <strong>{issue.user.login}</strong> closed this{" "}
+                  {moment(issue.closed_at)
+                    .startOf("day")
+                    .fromNow()}
                 </span>
-                <span className="toTheRight emoji">
-                  + <i className="far fa-dizzy"></i> •••
-                </span>
-              </div>
-              <div className="discussionBody">
-                <ReactMarkdown
-                  source={issue.body}
-                  escapeHtml={false}
-                  id="issueBody"
-                ></ReactMarkdown>
-              </div>
+              )}
+              <Row className="timeLine m-0"></Row>
+              <hr className="bottomDivider m-0 p-0" />
+              <Row className="m-0">
+                {currentUser && (
+                  <img
+                    src={currentUser.avatar_url}
+                    className="avatarIssue mt-3"
+                    alt={`${currentUser.login}'s avatar`}
+                  />
+                )}
+                <Col lg={11} className="newCommentBox">
+                  <textarea
+                    placeholder="write comment here"
+                    className="commentInput"
+                    value={commentBox}
+                    onChange={event => setComment(event.target.value)}
+                  />
+                  <Button className="float-right" onClick={() => submitIssue(commentBox)}>
+                    Post comment
+                  </Button>
+                </Col>
+              </Row>
             </Col>
-            <div className="rightCol">
+            <div className="rightCol pr-3">
               <p>
                 <strong>Assignees</strong>
               </p>
@@ -129,89 +215,6 @@ export default function Issues(props) {
               {!issue.assignee && <p>None yet</p>}
               <hr />
             </div>
-          </Row>
-          {comments.length > 0 &&
-            comments.map(comment => {
-              return (
-                <>
-                  <Row className="timeLine m-0"></Row>
-                  <Row
-                    className="container-fluid m-0 singleDisscusion"
-                    key={comment.id}
-                  >
-                    <img
-                      src={comment.user.avatar_url}
-                      className="avatarIssue"
-                      alt={`${comment.user.login}'s avatar`}
-                    />
-                    <Col className="discussionBox">
-                      <div className="discussionHeader">
-                        <span>
-                          <strong>{comment.user.login}</strong> commented{" "}
-                          <span>{moment(comment.created_at).fromNow()}</span>
-                        </span>
-                        <span className="toTheRight emoji">
-                          {comment.author_association !== "NONE" && (
-                            <span className="author">
-                              comment.author_associatio{" "}
-                            </span>
-                          )}
-                          {comment.user.login === issue.user.login && (
-                            <span className="author">AUTHOR</span>
-                          )}
-                          + <i className="far fa-dizzy"></i> •••
-                        </span>
-                      </div>
-                      <div className="discussionBody">
-                        <ReactMarkdown
-                          source={comment.body}
-                          escapeHtml={false}
-                          id="commentBody"
-                        ></ReactMarkdown>
-                      </div>
-                    </Col>
-                    <div className="rightCol"></div>
-                  </Row>
-                </>
-              );
-            })}
-          <Row className="timeLine m-0" height="30px"></Row>
-          {issue.state === "closed" && (
-            <span className="closeBadge">
-              <i class="fas fa-times-circle text-danger"></i>
-              <img
-                src={issue.user.avatar_url}
-                alt="author avatar"
-                height="20px"
-                className="avatarClosed"
-              />
-              <strong>{issue.user.login}</strong> closed this{" "}
-              {moment(issue.closed_at)
-                .startOf("day")
-                .fromNow()}
-            </span>
-          )}
-          <Row className="timeLine m-0"></Row>
-          <hr className="bottomDivider m-0 p-0" />
-          <Row className="m-0">
-            {currentUser && (
-              <img
-                src={currentUser.avatar_url}
-                className="avatarIssue mt-3"
-                alt={`${currentUser.login}'s avatar`}
-              />
-            )}
-            <Col lg={9} className="newCommentBox">
-              <textarea
-                placeholder="write comment here"
-                className="commentInput"
-                value={commentBox}
-                onChange={event => setComment(event.target.value)}
-              />
-              <Button onClick={() => submitIssue(commentBox)}>
-                Post comment
-              </Button>
-            </Col>
           </Row>
         </div>
 

@@ -43,10 +43,11 @@ export default function Repo(props) {
     "Content-type": "application/json",
     Accept: "application/vnd.github+json"
   };
+
   useEffect(() => {
-    getOpenIssues(props.currentOwner, props.currentRepo);
-    getCloseIssues(props.currentOwner, props.currentRepo);
-  }, []);
+    getOpenIssues(owner, repo);
+    getCloseIssues(owner, repo);
+  }, [repo, owner]);
 
 
   const getOpenIssues = async (user, repo) => {
@@ -104,7 +105,7 @@ export default function Repo(props) {
 
   return (
     <Container>
-      <p className="directoryIndicator mt-2 mb-1 pl-0"><Link to="/">{owner}</Link>/<Link to={`/${owner}/${repo}/issues`}>{repo}</Link></p>
+      <p className="directoryIndicator mt-3 mb-1 pl-0"><Link to="/">{owner}</Link>/<Link to={`/${owner}/${repo}/issues`}>{repo}</Link></p>
       <PsudoContainer
         currentOwner={props.currentOwner}
         currentRepo={props.currentRepo}

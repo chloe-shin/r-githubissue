@@ -404,8 +404,8 @@ function App() {
               {issues.length > 0 && <Issues
                 issues={issues}
                 comments={comments}
-                setIssueNumber={issueNumber}
                 currentUser={currentUser}
+                getComments={getComments}
               />}
             </>
           }

@@ -50,6 +50,7 @@ nav {
 }
 
 .outterContainer {
+  max-width: 70vw;
   margin: 0;
   margin-top: 1rem;
   background-color: var(--primary-background);
@@ -106,6 +107,7 @@ span {
   height: auto;
   border-radius: 3px;
   width: 30rem;
+  white-space: pre-wrap;
 }
 
 .discussionHeader {
@@ -204,21 +206,6 @@ span {
   resize: none;
 }
 
-.logoRowLP {
-  padding-top: 60px;
-  display: flex;
-  justify-content: center;
-}
-
-.logoLandingPage {
-  transform: scale(2);
-  margin-right: 30px;
-}
-
-.titleLandingPage {
-  color:white;
-}
-
 /* Chloe */
 
 /* landing page */
@@ -268,7 +255,7 @@ span {
 }
 .psudo {
   border: 1px solid rgba(0, 0, 0, 0.1);
-  margin-top: 30px;
+  margin-top: 15px;
   padding: 30px;
   text-align: center;
 }
@@ -695,14 +682,14 @@ textarea {
   min-height: 80vh;
   /* background-color: red; */
   color: white;
-  margin-top: 10vh;
+  margin-top: 15vh;
   text-align: center;
 }
 .landing-right-side form{
   min-height: 20vh;
   /* background-color: white; */
   /* border: 1px solid white; */
-  margin-top: 1rem;
+  margin-top: 10vh;
   display: flex;
   justify-content: center;
   align-items: center;
