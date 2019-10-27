@@ -93,13 +93,14 @@ function App() {
       // Accept: "application/vnd.github.v3.text-match+json"
     };
     event && event.preventDefault();
-    const url = `https://api.github.com/search/issues?q=${query}+sort=created&order=desc?per_page=20`;
+    const url = `https://api.github.com/search/issues?q=${query}&order=desc?per_page=20`;
     const response = await fetch(url, {
       method: "GET",
       headers: headers
     });
     const data = await response.json();
     setIssues(data.items);
+    setIsClear(!false);
 
     const links = response.headers
       .get("link")

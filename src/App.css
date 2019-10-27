@@ -564,7 +564,7 @@ a {
   display: flex;
   justify-content: space-between;
   padding-top: 2rem;
-  padding-bottom: 2rem;
+  padding-bottom: 0.6rem;
 }
 
 .search-button {
@@ -594,14 +594,28 @@ a {
   /*optional*/
   font-family: arial, sans-serif;
   /*input has OS specific font-family*/
-  color: #069;
+  color: #586069;
   text-decoration: underline;
   cursor: pointer;
   text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  margin-left: 0.7rem;
+  margin-left: 0;
+  margin-top: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.clear-search:hover {
+  color: #0366d6;
 }
 
 .search-icon {
   color: grey;
+}
+
+.fa-times-circle {
+  font-size: 18px;
 }
 
 /* END CUONG */

@@ -54,7 +54,6 @@ export default function Repo(props) {
           onSubmit={event => props.searchIssues(event)}
           onChange={event => props.setQuery(event.target.value)}
         >
-          {/* <span className="search-icon"><i class="fab fa-searchengin"></i></span> */}
           <FormControl
             type="text"
             placeholder=" Search all issues.."
@@ -65,19 +64,22 @@ export default function Repo(props) {
           <Button
             className="search-button"
             type="submit"
-            onClick={() => setIsClear(!false)}
+            // onClick={() => setIsClear(!false)}
           >
             > Submit
           </Button>
-          {isClear && (
-            <button onClick={() => refreshPage()} className="clear-search">
-              Clear current search query, filters, and sorts
-            </button>
-          )}
         </Form>
         <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
           New issue
         </button>
+      </div>
+      <div>
+        {props.isClear && (
+          <button onClick={() => refreshPage()} className="clear-search">
+            <i class="fas fa-times-circle"></i> Clear current search query,
+            filters, and sorts [ {props.query} ]
+          </button>
+        )}
       </div>
       <Row>
         <Col lg={12}>
@@ -156,7 +158,6 @@ export default function Repo(props) {
           </div>
         </Col>
       </Row>
-
       <Row>
         {props.issues &&
           props.issues.map(item => {
