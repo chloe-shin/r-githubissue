@@ -2,7 +2,7 @@
 
 Created with love by: `Sierra - Group 2(Chloe Shin, Hai Chung, Anh Khoa Nguyen, Cuong Tran, Vu Nguyen)`
 
-View online at: `https://group2-cchub.netlify.com`
+View online at: [HERE](https://group2-cchub.netlify.com)
 
 One or two sentence summary of your project.
 
