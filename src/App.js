@@ -7,16 +7,11 @@ import RingLoader from "react-spinners/RingLoader";
 // import { get } from "http";
 import Issues from "./component/Issues";
 import PaginationPack from "./component/Pagination";
-import { default as localIssues } from "./utils";
-import { closeissue, openissue } from "./utils";
-import { comments as localComments } from "./utils";
-import { Form, FormControl, Button } from "react-bootstrap";
 import LandingPage from "./component/LandingPage";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  useParams
 } from "react-router-dom";
 
 // Can be a string as well. Need to ensure each key-value pair ends with ;
@@ -220,21 +215,19 @@ function App() {
   }; //Hai - start using api
 
   const getOpenIssues = async () => {
-    // const url = `https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:open&per_page=20`;
-    // const response = await fetch(url);
-    // const openData = await response.json();
-    // setOpenIssues(openData);
-    // console.log ('open issues', openIssues)
-    setOpenIssues(openissue);
+    const url = `https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:open&per_page=20`;
+    const response = await fetch(url);
+    const openData = await response.json();
+    setOpenIssues(openData);
+    console.log ('open issues', openIssues)
   };
 
   const getCloseIssues = async () => {
-    // const url = `https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:closed&per_page=20`;
-    // const response = await fetch(url);
-    // const closeData = await response.json();
-    // setCloseIssues(closeData);
-    // console.log ('cloased issues', closeIssues)
-    setCloseIssues(closeissue);
+    const url = `https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:closed&per_page=20`;
+    const response = await fetch(url);
+    const closeData = await response.json();
+    setCloseIssues(closeData);
+    console.log ('cloased issues', closeIssues)
   };
 
   const getLandingRepo = async tok => {
@@ -317,10 +310,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    //   getComments(currentIssue.number);
-    // }, []);
-    // console.log("pageStatus", pageStatus);
-
     getComments(issueNumber);
   }, [issueNumber]);
 
