@@ -27,17 +27,17 @@ export default function Repo(props) {
   const [queryText, setQueryText] = useState("");
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
-  
+
   const headers = {
     "User-Agent": "Mozilla/5.0",
     Authorization: `token ${props.token && props.token.split("&")[0]}`,
     "Content-type": "application/json",
     Accept: "application/vnd.github+json"
   };
-
+  console.log("repo props", props);
   const onSubmitIssue = async e => {
     e.preventDefault();
-    const url = `https://api.github.com/repos/nakasaky55/fake-imdb/issues`;
+    const url = `https://api.github.com/repos/${props.currentOwner}/${props.currentRepo}/issues`;
 
     const post = await fetch(url, {
       method: "POST",
@@ -100,7 +100,7 @@ export default function Repo(props) {
                     href="#"
                     onClick={() => props.setIssues(props.openIssues.items)}
                   >
-                    <img className="stateOpen" src="img/open.svg" />
+                    <img className="stateOpen" src="/img/open.svg" />
                     {props.openIssues &&
                       props.openIssues.total_count} opened{" "}
                   </a>
@@ -109,7 +109,7 @@ export default function Repo(props) {
                     href="#"
                     onClick={() => props.setIssues(props.closeIssues.items)}
                   >
-                    <img className="stateClose2" src="img/success.svg" />
+                    <img className="stateClose2" src="/img/success.svg" />
                     {props.closeIssues &&
                       props.closeIssues.total_count} closed{" "}
                   </a>
@@ -184,11 +184,14 @@ export default function Repo(props) {
                           <Card.Title>
                             <div className="State">
                               {item.state === "open" ? (
-                                <img className="stateOpen" src="img/open.svg" />
+                                <img
+                                  className="stateOpen"
+                                  src="/img/open.svg"
+                                />
                               ) : (
                                 <img
                                   className="stateClose"
-                                  src="img/success.svg"
+                                  src="/img/success.svg"
                                 />
                               )}{" "}
                               <br />
