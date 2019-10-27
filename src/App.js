@@ -11,7 +11,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  useParams
 } from "react-router-dom";
 
 // Can be a string as well. Need to ensure each key-value pair ends with ;
@@ -36,6 +35,7 @@ function App() {
   const [currentOwner, setCurrentOwner] = useState("");
   const [currentRepo, setCurrentRepo] = useState("");
   const [issueNumber, setIssueNumber] = useState(null);
+  const [isError, setIsError] = useState(false);
   const [search, setSearch] = useState("Top repo has more than 100000 stars.");
   const [isLanding, setIsLanding] = useState(false);
   const [landingData, setLandingData] = useState([]);
@@ -51,7 +51,7 @@ function App() {
 
   const getAPI = async (currentOwner, currentRepo, token) => {
     //Hai- made url a varible and insert token as a dynamic varible
-    if(!token) token = sessionStorage.getItem('token');
+    if (!token) token = sessionStorage.getItem('token');
     const url = `https://api.github.com/repos/${currentOwner}/${currentRepo}/issues`;
     const headers = {
       Accept: "application / vnd.github.v3 + json",
@@ -131,35 +131,54 @@ function App() {
     setIsLoading(false);
   };
 
+  // const searchFalse = event => {
+  //     event && event.preventDefault();
+  //     if (issues.total_count === 0) {
+  //       (setIsError(!false))}}
+
   const searchIssues = async event => {
     const headers = {
       Accept: "application / vnd.github.v3 + json"
+      // Accept: "application/vnd.github.v3.text-match+json"
     };
+
     event && event.preventDefault();
-    const url = `https://api.github.com/search/issues?q=${query}?sort=created&order=desc?per_page=20`;
+
+    // event && event.preventDefault();
+
+    const url = `https://api.github.com/search/issues?q=${query}&order=desc?per_page=20`;
     const response = await fetch(url, {
       method: "GET",
       headers: headers
     });
     const data = await response.json();
     setIssues(data.items);
+    setIsClear(!false);
 
-    const links = response.headers
-      .get("link")
-      .split(",")
-      .map(url => {
-        return {
-          link: url
-            .split(";")[0]
-            .replace("<", "")
-            .replace(">", ""),
-          value: url
-            .split(";")[1]
-            .trim()
-            .replace('"', "")
-            .replace('"', "")
-        };
-      });
+    if (data.total_count === 0) {
+      return setIsError(!false);
+    } else {
+      setIssues(data.items);
+    }
+
+    const links =
+      response.headers.get("link") &&
+      response.headers
+        .get("link")
+        .split(",")
+        .map(url => {
+          return {
+            link: url
+              .split(";")[0]
+              .replace("<", "")
+              .replace(">", ""),
+            value: url
+              .split(";")[1]
+              .trim()
+              .replace('"', "")
+              .replace('"', "")
+          };
+        });
 
     setPageStatus(links);
   };
@@ -269,7 +288,7 @@ function App() {
   }
 
   useEffect(() => {
-    
+
     const existingToken = sessionStorage.getItem("token");
     const accessToken =
       window.location.search.split("=")[0] === "?access_token"
@@ -302,51 +321,45 @@ function App() {
   useEffect(() => {
     if (currentOwner && currentRepo) {
       getAPI(currentOwner, currentRepo, token);
-      getComments(currentOwner, currentRepo, issueNumber);}
+      getComments(currentOwner, currentRepo, issueNumber);
+    }
   }, [currentOwner, currentRepo, issueNumber, token]);
 
-  // useEffect(() => {
-  //     console.log('useEffect3', issues, issueNumber)
-  //     console.log('sdfdfsdfsdfsdfsdfsdfsdfsdfsdfsdf', issues.find(issue => issue.number === parseInt(issueNumber)));
-  // }, [currentOwner, currentRepo, issues, issueNumber])
-
-  // console.log('token state:', token)
-  // console.log("pageStatus", pageStatus)
+  //start Rendering
   return (
     <Router>
       {/* Search for issues (within Repo.js) */}
 
       <Switch>
         <Route path="/" exact>
-            <LandingPage
-              landingData={landingData}
-              searchRepo={searchRepo}
-              token={token}
-              getRepoIssues={getRepoIssues}
-              search={search}
-              setCurrentOwner={setCurrentOwner}
-              setCurrentRepo={setCurrentRepo}
-            />
+          <LandingPage
+            landingData={landingData}
+            searchRepo={searchRepo}
+            token={token}
+            getRepoIssues={getRepoIssues}
+            search={search}
+            setCurrentOwner={setCurrentOwner}
+            setCurrentRepo={setCurrentRepo}
+          />
         </Route>
-        <Route exact path={`/:owner/:repo/issues`} component={({match}) => 
-          { 
-            let { owner, repo } = match.params;
-            setCurrentOwner(owner);
-            setCurrentRepo(repo);
-            return (
-              <>
-                <Nav currentOwner={currentOwner} currentRepo={currentRepo} />
-                {isLoading ? (
-                  <div className="sweet-loading">
-                    <RingLoader
-                      css={override}
-                      sizeUnit={"px"}
-                      size={150}
-                      color={"rgb(54, 215, 183)"}
-                      loading={isLoading}
-                    />
-                  </div>
-                ) : (
+        <Route exact path={`/:owner/:repo/issues`} component={({ match }) => {
+          let { owner, repo } = match.params;
+          setCurrentOwner(owner);
+          setCurrentRepo(repo);
+          return (
+            <>
+              <Nav currentOwner={currentOwner} currentRepo={currentRepo} />
+              {isLoading ? (
+                <div className="sweet-loading">
+                  <RingLoader
+                    css={override}
+                    sizeUnit={"px"}
+                    size={150}
+                    color={"rgb(54, 215, 183)"}
+                    loading={isLoading}
+                  />
+                </div>
+              ) : (
                   <Repo
                     query={query}
                     issues={issues}
@@ -358,35 +371,41 @@ function App() {
                     getAPI={getAPI}
                     isClear={isClear}
                     setIsClear={setIsClear}
+                    searchIssues={searchIssues}
+                    isError={isError}
+                    token={token}
+                    setIsError={setIsError}
+                  />
+                )}
+              {isError ? (
+                ""
+              ) : (
+                  <PaginationPack
+                    pageStatus={pageStatus && pageStatus}
+                    setIssues={setIssues}
+                    getAPIPagination={getAPIPagination}
+                    setIsLoading={setIsLoading}
                     token={token}
                   />
                 )}
-                <PaginationPack
-                  pageStatus={pageStatus && pageStatus}
-                  setIssues={setIssues}
-                  getAPIPagination={getAPIPagination}
-                  setIsLoading={setIsLoading}
-                  token={token}
-                />
             </>
-            )
-          }} />
+          )
+        }} />
         <Route
           exact
           path={`/:owner/:repo/issues/:number`}
-          component={({match}) => {
-            let {owner, repo, number} = match.params
+          component={({ match }) => {
+            let { owner, repo, number } = match.params
             setCurrentOwner(owner);
             setCurrentRepo(repo);
             setIssueNumber(number);
             return <>
               <Nav currentOwner={currentOwner} currentRepo={currentRepo} />
-              {issues.length>0 && <Issues
+              {issues.length > 0 && <Issues
                 issues={issues}
                 comments={comments}
                 setIssueNumber={issueNumber}
                 currentUser={currentUser}
-                currentIssue={currentIssue}
               />}
             </>
           }

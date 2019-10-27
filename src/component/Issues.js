@@ -8,10 +8,11 @@ export default function Issues(props) {
   const [issue, setIssue] = useState({});
   let { issues, comments, setIssueNumber, currentUser, currentIssue } = props;
   let { owner, repo, number } = useParams();
-  const [commentBox, setComment] = useState("")
-  
+  const [commentBox, setComment] = useState("");
+  const [defaultValue, setDefaultValue] = useState("");
+
   // console.log('inIssue', props);
-  const url = issue && issue.url+"/comments";
+  const url = issue && issue.url + "/comments";
 
   const getIssue = (issues) => {
     let i = issues.find(issue => issue.number === parseInt(number))
@@ -41,11 +42,13 @@ export default function Issues(props) {
       })
     });
   };
-  const submitIssue = async(comment) => {
+  const submitIssue = async comment => {
     const result = await postComment(comment);
-
+    props.getComments(number);
     // alert("res", result)
-  }
+    setComment("");
+  };
+
   if (issue.title) {
     return (
       <>
@@ -62,10 +65,10 @@ export default function Issues(props) {
                   <i class="fas fa-check-circle"></i> Closed
                 </Badge>
               ) : (
-                <Badge pill variant="success">
-                  <i class="fas fa-exclamation-circle"></i> Open
+                  <Badge pill variant="success">
+                    <i class="fas fa-exclamation-circle"></i> Open
                 </Badge>
-              )}
+                )}
               <span>
                 <strong>{issue.user.login}</strong> opened this issue on{" "}
                 {moment(issue.created_at).format("MMM Do YY")} •{" "}
@@ -202,13 +205,16 @@ export default function Issues(props) {
               <textarea
                 placeholder="write comment here"
                 className="commentInput"
+                value={commentBox}
                 onChange={event => setComment(event.target.value)}
               />
-              <Button onClick={() => submitIssue(commentBox)}>Post comment</Button>
+              <Button onClick={() => submitIssue(commentBox)}>
+                Post comment
+              </Button>
             </Col>
           </Row>
         </div>
-        {/* rendering all the comments section */}
+
       </>
     );
   } else return null;

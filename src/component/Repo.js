@@ -27,16 +27,15 @@ export default function Repo(props) {
   const [key, setKey] = useState("write");
   const [queryTitle, setQueryTitle] = useState("");
   const [queryText, setQueryText] = useState("");
-  const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
   let { repo, owner } = useParams();
 
   const [openIssues, setOpenIssues] = useState(0);
   const [closeIssues, setCloseIssues] = useState(0);
 
-  const token = sessionStorage.getItem('token');
-
-  console.log('locationRepo: ', props)
+  function refreshPage() {
+    window.location.reload();
+  }
 
   const headers = {
     "User-Agent": "Mozilla/5.0",
@@ -47,11 +46,11 @@ export default function Repo(props) {
   useEffect(() => {
     getOpenIssues(props.currentOwner, props.currentRepo);
     getCloseIssues(props.currentOwner, props.currentRepo);
-  }, [props.issues]);
+  }, []);
 
 
   const getOpenIssues = async (user, repo) => {
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem("token");
     const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:open&per_page=20`;
     const headers = {
       Accept: "application / vnd.github.v3 + json"
@@ -62,11 +61,16 @@ export default function Repo(props) {
     });
     const openData = await response.json();
     setOpenIssues(openData);
-    // console.log('open data called by Chloe', openData, 'open issues"', openIssues)
+    // console.log(
+    //   "open data called by Chloe",
+    //   openData,
+    //   'open issues"',
+    //   openIssues
+    // );
   };
 
   const getCloseIssues = async (user, repo) => {
-    const token = sessionStorage.getItem('token');
+    const token = sessionStorage.getItem("token");
     const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:closed&per_page=20`;
     const headers = {
       Accept: "application / vnd.github.v3 + json"
@@ -79,21 +83,23 @@ export default function Repo(props) {
     setCloseIssues(closeData);
   };
 
-
-  const onSubmitIssue = async e => {
-    e.preventDefault();
+  const postIssues = async () => {
     const url = `https://api.github.com/repos/${props.currentOwner}/${props.currentRepo}/issues`;
-
     const post = await fetch(url, {
       method: "POST",
-      headers: headers,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `token ${props.token}`
+      },
       body: JSON.stringify({
         title: queryTitle,
         body: queryText
-        // assignees: ["haichungcn"],
-        // labels: ["bug"]
       })
     });
+  };
+  const onSubmitIssue = async () => {
+    postIssues();
+    setIsOpen(false);
   };
 
   return (
@@ -103,161 +109,215 @@ export default function Repo(props) {
         currentOwner={props.currentOwner}
         currentRepo={props.currentRepo}
       />
+
       <div className="searchIssue_newIssue">
-        <Form
-          inline
-          onSubmit={event => props.searchIssues(event)}
-          onChange={event => props.setQuery(event.target.value)}
-        >
-          <FormControl
-            type="text"
-            placeholder="Search all issues.."
-            className=" mr-sm-2 searchissue"
-          />
-          <Button
-            className="search-button"
-            type="submit"
-            onClick={() => setIsClear(!false)}
-          >
-            Submit
-          </Button>
-          {isClear && (
-            <button onClick={() => props.getAPI(owner, repo, token)} className="clear-search">
-              Clear current search query, filters, and sorts
-            </button>
+        {props.isError ? (
+          ""
+        ) : (
+            <Form
+              inline
+              onSubmit={event => {
+                event.preventDefault();
+                props.searchIssues(event);
+              }}
+              onChange={event => {
+                event.preventDefault();
+                props.setQuery(event.target.value);
+              }}
+            >
+              <FormControl
+                type="text"
+                placeholder=" Search all issues.."
+                className=" mr-sm-2"
+              />
+              <i class="fab fa-searchengin"></i>
+
+              <Button
+                className="search-button"
+                type="submit"
+              // onClick={() => setIsClear(!false)}
+              >
+                > Submit
+            </Button>
+            </Form>
           )}
-        </Form>
+
         <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
           New issue
         </button>
       </div>
-      <Row>
-        <Col lg={12}>
-          <div className="top">
-            <Container>
-              <Row>
-                <Col lg={4} className="totalcount">
-                  <a
-                    href="#"
-                    onClick={() => props.setIssues(openIssues.items)}
-                  >
-                    <img className="stateOpen" src="/img/open.svg" />
-                    {openIssues.total_count} opened{" "}
-                  </a>
 
-                  <a
-                    href="#"
-                    onClick={() => props.setIssues(closeIssues.items)}
-                  >
-                    <img className="stateClose2" src="/img/success.svg" />
-                    {closeIssues.total_count} closed{" "}
-                  </a>
-                </Col>
-                <Col lg={8}> <DropDownGrp />
-                </Col>
+      <div>
+        {props.isClear && (
+          <button onClick={() => refreshPage()} className="clear-search">
+            <i class="fas fa-times-circle"></i> Clear current search query,
+            filters, and sorts:{" "}
+            <u>
+              <b>{props.query}</b>
+            </u>
+          </button>
+        )}
+      </div>
 
-              </Row>
-            </Container>
-          </div>
-        </Col>
-      </Row>
-
-      <Row>
-        {props.issues.length > 0 &&
-          props.issues.map(item => {
-            // console.log("issue, listen to charles", item);
-            return (
-              <Col key={`issue#${item.number}`} lg={12}>
-                <Card>
-                  <Row className="cardrow">
-                    <Col lg={10}>
-                      <Card.Body>
-                        <Link
-                          to={`/${props.currentOwner}/${props.currentRepo}/issues/${item.number}`}
+      {props.isError ? (
+        <Card className="error-message-issue">
+          <Card.Body>
+            <Card.Title className="noResult-title">
+              No results matched your search
+            </Card.Title>
+            <Card.Text>
+              You could return to your repo here and try another search
+            </Card.Text>
+            <Button variant="primary" onClick={() => refreshPage()}>
+              Back to previous repository
+            </Button>
+          </Card.Body>
+        </Card>
+      ) : (
+          <>
+            <Row>
+              <Col lg={12}>
+                <div className="top">
+                  <Container>
+                    <Row>
+                      <Col lg={4} className="totalcount">
+                        <a
+                          href="#"
+                          onClick={() => props.setIssues(openIssues.items)}
                         >
-                          <Card.Title>
-                            <div className="State">
-                              {item.state === "open" ? (
-                                <img className="stateOpen" src="/img/open.svg" />
-                              ) : (
-                                  <img className="stateClose" src="/img/success.svg" />
-                                )}{" "}
-                              <br />
-                            </div>
-                            <a href="#">
-                              {" "}
-                              {item.title}
-                              <LabelsDisplay labels={item.labels} />
-                            </a>
+                          <img className="stateOpen" src="/img/open.svg" />
+                          {openIssues.total_count} opened{" "}
+                        </a>
 
-                          </Card.Title>
-
-                        </Link>
-                        <Card.Text>
-                          #{item.number} {item.state}{" "}
-                          {moment(item.updated_at)
-                            .startOf("day")
-                            .fromNow()}{" "}
-                          by
-                          <OverlayTrigger
-                            trigger="hover"
-                            placement="right"
-                            overlay={
-                              <Popover id="popover-basic">
-                                <Popover.Title as="h3">
-                                  <img
-                                    className="popOverimg"
-                                    src={item.user.avatar_url}
-                                  />
-                                  <strong>{item.user.login}</strong>
-                                </Popover.Title>
-                                <Popover.Content></Popover.Content>
-                              </Popover>
-                            }
-                          >
-                            <a href={item.user.html_url}> {item.user.login} </a>
-                          </OverlayTrigger>
-                          <br />
-                        </Card.Text>
-                      </Card.Body>
-                    </Col>
-
-                    <Col lg={2}>
-                      <div className="User">
-                        <img className="avatar" src={item.user.avatar_url} />
-                        <OverlayTrigger
-                          trigger="hover"
-                          placement="left"
-                          overlay={
-                            <Popover id="popover-basic">
-                              <Popover.Title as="h3">
-                                <img
-                                  className="popOverimg"
-                                  src={item.user.avatar_url}
-                                />
-                                <strong>{item.user.login}</strong>
-                              </Popover.Title>
-                              <Popover.Content>
-                                {item.user.site_admin}
-                              </Popover.Content>
-                            </Popover>
-                          }
+                        <a
+                          href="#"
+                          onClick={() => props.setIssues(closeIssues.items)}
                         >
-                          <a href={item.user.html_url}> {item.user.login} </a>
-                        </OverlayTrigger>
-
-                        <div className="comment-chloe">
-                          <i class="fas fa-comment"></i>
-                          {item.comments}
-                        </div>
-                      </div>
-                    </Col>
-                  </Row>
-                </Card>
+                          <img className="stateClose2" src="/img/success.svg" />
+                          {closeIssues.total_count} closed{" "}
+                        </a>
+                      </Col>
+                      <Col lg={8}>
+                        {" "}
+                        <DropDownGrp />
+                      </Col>
+                    </Row>
+                  </Container>
+                </div>
               </Col>
-            );
-          })}
-      </Row>
+            </Row>
+
+            <Row>
+              {props.issues &&
+                props.issues.map(item => {
+                  console.log("issue, listen to charles", item);
+                  return (
+                    <Col key={`issue#${item.number}`} lg={12}>
+                      <Card>
+                        <Row className="cardrow">
+                          <Col lg={10}>
+                            <Card.Body>
+                              <Link
+                                to={`/${props.currentOwner}/${props.currentRepo}/issues/${item.number}`}
+                              >
+                                <Card.Title>
+                                  <div className="State">
+                                    {item.state === "open" ? (
+                                      <img
+                                        className="stateOpen"
+                                        src="/img/open.svg"
+                                      />
+                                    ) : (
+                                        <img
+                                          className="stateClose"
+                                          src="/img/success.svg"
+                                        />
+                                      )}{" "}
+                                    <br />
+                                  </div>
+                                  <a href="#">
+                                    {" "}
+                                    {item.title}
+                                    <LabelsDisplay labels={item.labels} />
+                                  </a>
+                                </Card.Title>
+                              </Link>
+                              <Card.Text>
+                                #{item.number} {item.state}{" "}
+                                {moment(item.updated_at)
+                                  .startOf("day")
+                                  .fromNow()}{" "}
+                                by
+                              <OverlayTrigger
+                                  trigger="hover"
+                                  placement="right"
+                                  overlay={
+                                    <Popover id="popover-basic">
+                                      <Popover.Title as="h3">
+                                        <img
+                                          className="popOverimg"
+                                          src={item.user.avatar_url}
+                                        />
+                                        <strong>{item.user.login}</strong>
+                                      </Popover.Title>
+                                      <Popover.Content></Popover.Content>
+                                    </Popover>
+                                  }
+                                >
+                                  <a href={item.user.html_url}>
+                                    {" "}
+                                    {item.user.login}{" "}
+                                  </a>
+                                </OverlayTrigger>
+                                <br />
+                              </Card.Text>
+                            </Card.Body>
+                          </Col>
+
+                          <Col lg={2}>
+                            <div className="User">
+                              <img
+                                className="avatar"
+                                src={item.user.avatar_url}
+                              />
+                              <OverlayTrigger
+                                trigger="hover"
+                                placement="left"
+                                overlay={
+                                  <Popover id="popover-basic">
+                                    <Popover.Title as="h3">
+                                      <img
+                                        className="popOverimg"
+                                        src={item.user.avatar_url}
+                                      />
+                                      <strong>{item.user.login}</strong>
+                                    </Popover.Title>
+                                    <Popover.Content>
+                                      {item.user.site_admin}
+                                    </Popover.Content>
+                                  </Popover>
+                                }
+                              >
+                                <a href={item.user.html_url}>
+                                  {" "}
+                                  {item.user.login}{" "}
+                                </a>
+                              </OverlayTrigger>
+
+                              <div className="comment-chloe">
+                                <i class="fas fa-comment"></i>
+                                {item.comments}
+                              </div>
+                            </div>
+                          </Col>
+                        </Row>
+                      </Card>
+                    </Col>
+                  );
+                })}
+            </Row>
+          </>
+        )}
 
       <Modal
         className="popupIssues"
@@ -267,12 +327,12 @@ export default function Repo(props) {
         <div className="col-md-9 col-sm-12">
           <div className="composer new-comment">
             <span className="comment-avatar">
-              <a
-                className="d-inline-block"
-                href={props.html_user}
-                target="_blank"
-              >
-                <img className="avatar" src={props.avatar_url} alt="avata" />
+              <a className="d-inline-block" target="_blank">
+                <img
+                  className="avatar"
+                  src={props.currentUser && props.currentUser.avatar_url}
+                  alt="avata"
+                />
               </a>
             </span>
             <div className="comment">
@@ -328,7 +388,9 @@ export default function Repo(props) {
             <button
               disabled={!queryTitle}
               className="btn btn-primary"
-              onClick={event => onSubmitIssue(event)}
+              onClick={event => {
+                onSubmitIssue(event);
+              }}
             >
               Submit new issue
             </button>
