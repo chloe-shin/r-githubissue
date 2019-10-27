@@ -9,7 +9,7 @@ export default function Navigation(props) {
       <Navbar bg="dark" variant="dark">
         <Navbar.Brand href="#home">
           <img
-            src="img/dog.svg"
+            src="/img/dog.svg"
             width="30"
             height="30"
             className="d-inline-block align-top"

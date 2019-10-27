@@ -389,7 +389,6 @@ function App() {
             setIsLoading={setIsLoading}
             token={token}
           />
-          )}
         </Route>
         <Route
           exact
@@ -403,6 +402,7 @@ function App() {
                 setIssueNumber={setIssueNumber}
                 currentUser={currentUser}
                 token={token}
+                getComments={getComments}
               />
             </>
           }

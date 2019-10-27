@@ -8,13 +8,14 @@ export default function Issues(props) {
   let { issues, comments, setIssueNumber, currentUser } = props;
   let { number } = useParams();
   let issue = issues.find(issue => issue.number === parseInt(number));
-  const [commentBox, setComment] = useState("")
+  const [commentBox, setComment] = useState("");
+  const [defaultValue, setDefaultValue] = useState("");
 
   useEffect(() => {
     setIssueNumber(number);
   }, [number]);
-  
-  const url = issue && issue.url+"/comments";
+
+  const url = issue && issue.url + "/comments";
 
   const headers = {
     "User-Agent": "Mozilla/5.0",
@@ -35,11 +36,12 @@ export default function Issues(props) {
       })
     });
   };
-  const submitIssue = async(comment) => {
+  const submitIssue = async comment => {
     const result = await postComment(comment);
-
+    props.getComments(number);
     // alert("res", result)
-  }
+    setComment("");
+  };
   if (issue) {
     return (
       <>
@@ -195,9 +197,12 @@ export default function Issues(props) {
               <textarea
                 placeholder="write comment here"
                 className="commentInput"
+                value={commentBox}
                 onChange={event => setComment(event.target.value)}
               />
-              <Button onClick={() => submitIssue(commentBox)}>Post comment</Button>
+              <Button onClick={() => submitIssue(commentBox)}>
+                Post comment
+              </Button>
             </Col>
           </Row>
         </div>
