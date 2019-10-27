@@ -22,6 +22,7 @@ export default function Issues(props) {
     "Content-type": "application/json",
     Accept: "application/vnd.github+json"
   };
+
   const postComment = async commentBox => {
     const body = {
       value: "hahahahaha"
@@ -34,6 +35,11 @@ export default function Issues(props) {
       })
     });
   };
+  const submitIssue = async(comment) => {
+    const result = await postComment(comment);
+
+    // alert("res", result)
+  }
   if (issue) {
     return (
       <>
@@ -191,7 +197,7 @@ export default function Issues(props) {
                 className="commentInput"
                 onChange={event => setComment(event.target.value)}
               />
-              <Button onClick={() => postComment(commentBox)}>Post comment</Button>
+              <Button onClick={() => submitIssue(commentBox)}>Post comment</Button>
             </Col>
           </Row>
         </div>
