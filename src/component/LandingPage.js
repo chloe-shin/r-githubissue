@@ -15,29 +15,55 @@ export default function LandingPage(props) {
   return (
     <Container fluid="true" className="landing-page">
       <Row>
-        <Col className="landing-right-side" lg={12}>
+        <Col className="landing-right-side mt-5" lg={12}>
           <form
             onSubmit={event => {
               event.preventDefault();
               props.searchRepo(query, props.token);
             }}
           >
-            <h3>Find your destination</h3>
+          <img
+          src="/img/dog.svg"
+          width="50"
+          height="50"
+          className="d-inline-block align-top"
+          alt="React Bootstrap logo"
+        /> <br/>
+            <h3 className= "landingtitle">
+            BUILD BETTER. FASTER. TOGETHER.</h3>
+            <p className= "landingtitle2"> Now you can do with 
+            
+            CHUON CHUON HUB <img
+            src="/img/dog.svg"
+            width="22"
+            height="22"
+            className="d-inline-block align-top"
+            alt="React Bootstrap logo"
+          />   </p> <br/>
+          <div className = "searchGrp">  
             <input
               onChange={event => setQuery(event.target.value)}
-              placeholder="Enter your curious"
+              placeholder="What repository are you looking for?"
             ></input>
             <Button
               type="submit"
               className="landing-button"
               onClick={() => props.searchRepo(query, props.token)}
             >
-              Find
+              FIND
             </Button>
+            </div>
           </form>
         </Col>
         <Col className="landing-left-side" lg={12}>
-          <h2></h2>
+          <h6 className = "top10"> MEET REPOSITORIES FOR YOU </h6> 
+          <img
+          src="/img/arrow.svg"
+          width="30"
+          height="30"
+          className="d-inline-block align-top arrow"
+          alt="React Bootstrap logo"
+        /> <br/>
           <Row>
             {props.landingData.items &&
               props.landingData.items.map(item => {

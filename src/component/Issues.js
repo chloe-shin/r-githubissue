@@ -206,7 +206,7 @@ export default function Issues(props) {
             </Col>
           </Row>
         </div>
-        {/* rendering all the comments section */}
+
       </>
     );
   } else return null;
