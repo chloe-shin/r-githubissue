@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCoffee } from "@fortawesome/free-solid-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faCoffee } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 import {Link} from "react-router-dom"
-import PaginationPack from "./Pagination";
+// import PaginationPack from "./Pagination";
 
 export default function LandingPage(props) {
   const [query, setQuery] = useState("");

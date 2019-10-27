@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -28,12 +28,50 @@ export default function Repo(props) {
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
   
+  const [openIssuesCount, setOpenIssuesCount] = useState(0);
+  const [closeIssuesCount, setCloseIssuesCount] = useState(0);
+
   const headers = {
     "User-Agent": "Mozilla/5.0",
     Authorization: `token ${props.token && props.token.split("&")[0]}`,
     "Content-type": "application/json",
     Accept: "application/vnd.github+json"
   };
+  useEffect(() => {
+    getOpenIssues(props.currentOwner, props.currentRepo);
+    getCloseIssues(props.currentOwner, props.currentRepo);
+ }, []);
+  
+
+  const getOpenIssues = async (user, repo) => {
+    const token = sessionStorage.getItem('token');
+    const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:open&per_page=20&access_token=${token}`;
+    const headers = {
+      Accept: "application / vnd.github.v3 + json"
+    };
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers
+    });
+    const openData = await response.json();
+    setOpenIssuesCount(openData.total_count);
+    console.log ('open issues called by beautiful Chloe', user, repo, openData)
+  };
+  
+  const getCloseIssues = async (user, repo) => {
+    const token = sessionStorage.getItem('token');
+    const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:closed&per_page=20&access_token=${token}`;
+    const headers = {
+      Accept: "application / vnd.github.v3 + json"
+    };
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers
+    });
+    const closeData = await response.json();
+    setCloseIssuesCount(closeData.total_count);
+  };
+
 
   const onSubmitIssue = async e => {
     e.preventDefault();
@@ -51,15 +89,6 @@ export default function Repo(props) {
     });
   };
 
-  const popover = (
-    <Popover id="popover-basic">
-      <Popover.Title as="h3"> </Popover.Title>
-      <Popover.Content>
-        And here's some <strong>amazing</strong> content. It's very engaging.
-        right?
-      </Popover.Content>
-    </Popover>
-  );
   return (
     <Container>
       <div className="searchIssue_newIssue">
@@ -100,18 +129,16 @@ export default function Repo(props) {
                     href="#"
                     onClick={() => props.setIssues(props.openIssues.items)}
                   >
-                    <img className="stateOpen" src="img/open.svg" />
-                    {props.openIssues &&
-                      props.openIssues.total_count} opened{" "}
+                    <img className="stateOpen" src="/img/open.svg" />
+                    {openIssuesCount} opened{" "}
                   </a>
 
                   <a
                     href="#"
                     onClick={() => props.setIssues(props.closeIssues.items)}
                   >
-                    <img className="stateClose2" src="img/success.svg" />
-                    {props.closeIssues &&
-                      props.closeIssues.total_count} closed{" "}
+                    <img className="stateClose2" src="/img/success.svg" />
+                    {closeIssuesCount} closed{" "}
                   </a>
                 </Col>
                 <Col lg={8}>
@@ -184,12 +211,9 @@ export default function Repo(props) {
                           <Card.Title>
                             <div className="State">
                               {item.state === "open" ? (
-                                <img className="stateOpen" src="img/open.svg" />
+                                <img className="stateOpen" src="/img/open.svg"/>
                               ) : (
-                                <img
-                                  className="stateClose"
-                                  src="img/success.svg"
-                                />
+                                <img className="stateClose" src="/img/success.svg"/>
                               )}{" "}
                               <br />
                             </div>

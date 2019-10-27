@@ -7,10 +7,9 @@ import RingLoader from "react-spinners/RingLoader";
 // import { get } from "http";
 import Issues from "./component/Issues";
 import PaginationPack from "./component/Pagination";
-import { default as localIssues } from "./utils";
-import { closeissue, openissue } from "./utils";
-import { comments as localComments } from "./utils";
-import { Form, FormControl, Button } from "react-bootstrap";
+// import { default as localIssues } from "./utils";
+// import { closeissue, openissue } from "./utils";
+// import { comments as localComments } from "./utils";
 import LandingPage from "./component/LandingPage";
 import {
   BrowserRouter as Router,
@@ -28,7 +27,7 @@ const override = `css
 
 // require("dotenv").config({path: '.env'});
 const clientId = process.env.REACT_APP_CLIENT_ID;
-// console.log("id", clientId);
+console.log("id", clientId);
 function App() {
   const [token, setToken] = useState("");
   const [issues, setIssues] = useState([]);
@@ -36,15 +35,14 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
-  const [openIssues, setOpenIssues] = useState([]);
-  const [closeIssues, setCloseIssues] = useState([]);
+  // const [openIssues, setOpenIssues] = useState([]);
+  // const [closeIssues, setCloseIssues] = useState([]);
   const [comments, setComments] = useState([]);
   const [currentUser, setCurrentUser] = useState();
   const [currentOwner, setCurrentOwner] = useState("facebook");
   const [currentRepo, setCurrentRepo] = useState("react");
   const [issueNumber, setIssueNumber] = useState(null);
   const [search, setSearch] = useState("Top repo has more than 100000 stars.");
-
   const [isLanding, setIsLanding] = useState(false);
   const [landingData, setLandingData] = useState([]);
 
@@ -55,7 +53,6 @@ function App() {
     setCurrentUser(data);
   };
 
-  //this get called from line 167
   const getAPI = async existingToken => {
     //Hai- made url a varible and insert existingToken as a dynamic varible
     const url = `https://api.github.com/repos/facebook/react/issues`;
@@ -219,23 +216,6 @@ function App() {
     } else console.log("there is no number passed in to getComments");
   }; //Hai - start using api
 
-  const getOpenIssues = async () => {
-    // const url = `https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:open&per_page=20`;
-    // const response = await fetch(url);
-    // const openData = await response.json();
-    // setOpenIssues(openData);
-    // console.log ('open issues', openIssues)
-    setOpenIssues(openissue);
-  };
-
-  const getCloseIssues = async () => {
-    // const url = `https://api.github.com/search/issues?q=repo:facebook/react+type:issue+state:closed&per_page=20`;
-    // const response = await fetch(url);
-    // const closeData = await response.json();
-    // setCloseIssues(closeData);
-    // console.log ('cloased issues', closeIssues)
-    setCloseIssues(closeissue);
-  };
 
   const getLandingRepo = async tok => {
     const url = `https://api.github.com/search/repositories?q=stars:>=100000&fork:false?access_token=${tok}`;
@@ -311,8 +291,6 @@ function App() {
       // getAPI(existingToken);
       getLandingRepo(existingToken.split("&")[0]);
       CurrentUser(existingToken);
-      getOpenIssues();
-      getCloseIssues();
     }
   }, []);
 
@@ -338,7 +316,6 @@ function App() {
               searchRepo={searchRepo}
               token={token}
               getRepoIssues={getRepoIssues}
-              token={token}
               search={search}
             />
           </div>
@@ -357,13 +334,9 @@ function App() {
           ) : (
             <Repo
               query={query}
-              closeIssues={closeIssues}
-              openIssues={openIssues}
               issues={issues}
               setIssues={setIssues}
               currentUser={currentUser}
-              // label={label}
-              // getLabel={getLabel}
               currentOwner={currentOwner}
               currentRepo={currentRepo}
               setQuery={setQuery}
