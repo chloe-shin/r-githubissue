@@ -43,6 +43,7 @@ function App() {
   const [currentOwner, setCurrentOwner] = useState("");
   const [currentRepo, setCurrentRepo] = useState("");
   const [issueNumber, setIssueNumber] = useState(null);
+  const [isError, setIsError] = useState(false);
   const [search, setSearch] = useState("Top repo has more than 100000 stars.");
   const [isLanding, setIsLanding] = useState(false);
   const [landingData, setLandingData] = useState([]);
@@ -136,11 +137,21 @@ function App() {
     setIsLoading(false);
   };
 
+  // const searchFalse = event => {
+  //     event && event.preventDefault();
+  //     if (issues.total_count === 0) {
+  //       (setIsError(!false))}}
+
   const searchIssues = async event => {
     const headers = {
       Accept: "application / vnd.github.v3 + json"
+      // Accept: "application/vnd.github.v3.text-match+json"
     };
+
+    event && event.preventDefault();
+
     // event && event.preventDefault();
+
     const url = `https://api.github.com/search/issues?q=${query}&order=desc?per_page=20`;
     const response = await fetch(url, {
       method: "GET",
@@ -148,6 +159,13 @@ function App() {
     });
     const data = await response.json();
     setIssues(data.items);
+    setIsClear(!false);
+
+    if (data.total_count === 0) {
+      return setIsError(!false);
+    } else {
+      setIssues(data.items);
+    }
 
     const links =
       response.headers.get("link") &&
@@ -354,17 +372,23 @@ function App() {
               getAPI={getAPI}
               isClear={isClear}
               setIsClear={setIsClear}
-              token={token}
               searchIssues={searchIssues}
+              isError={isError}
+              token={token}
+              setIsError={setIsError}
             />
           )}
-          <PaginationPack
-            pageStatus={pageStatus && pageStatus}
-            setIssues={setIssues}
-            getAPIPagination={getAPIPagination}
-            setIsLoading={setIsLoading}
-            token={token}
-          />
+          {isError ? (
+            ""
+          ) : (
+            <PaginationPack
+              pageStatus={pageStatus && pageStatus}
+              setIssues={setIssues}
+              getAPIPagination={getAPIPagination}
+              setIsLoading={setIsLoading}
+              token={token}
+            />
+          )}
         </Route>
         <Route
           exact

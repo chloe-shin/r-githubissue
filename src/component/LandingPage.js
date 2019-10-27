@@ -56,7 +56,7 @@ export default function LandingPage(props) {
           </form>
         </Col>
         <Col className="landing-left-side" lg={12}>
-          <h5 className = "top10"> MEET TOP 10 REPOSITORIES FOR YOU </h5> 
+          <h6 className = "top10"> MEET TOP 10 REPOSITORIES FOR YOU </h6> 
           <img
           src="/img/arrow.svg"
           width="30"
