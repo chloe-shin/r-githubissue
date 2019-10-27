@@ -43,7 +43,7 @@ export default function LandingPage(props) {
           <div className = "searchGrp">  
             <input
               onChange={event => setQuery(event.target.value)}
-              placeholder="What are you looking for?"
+              placeholder="What repository are you looking for?"
             ></input>
             <Button
               type="submit"
@@ -56,7 +56,7 @@ export default function LandingPage(props) {
           </form>
         </Col>
         <Col className="landing-left-side" lg={12}>
-          <h6 className = "top10"> MEET TOP 10 REPOSITORIES FOR YOU </h6> 
+          <h6 className = "top10"> MEET REPOSITORIES FOR YOU </h6> 
           <img
           src="/img/arrow.svg"
           width="30"
