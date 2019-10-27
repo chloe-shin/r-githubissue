@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Pagination } from "react-bootstrap";
 
 export default function PaginationPack(props) {
-  // console.log("props issue", props.pageStatus)
   const nextValue = props.pageStatus
     ? props.pageStatus.filter(({ value }) => {
         return value === "rel=next";
@@ -24,10 +23,10 @@ export default function PaginationPack(props) {
       })
     : "";
 
-  const lastPage = lastValue[0] ? lastValue[0].link.split("&page=")[1] : null;
-  const nextPage = nextValue[0] ? nextValue[0].link.split("&page=")[1] : null;
+  const lastPage = lastValue[0] ? lastValue[0].link.split("?page=")[1] : null;
+  const nextPage = nextValue[0] ? nextValue[0].link.split("?page=")[1] : null;
   const currPage = nextPage - 1;
-  const baseUrl = lastValue[0] ? lastValue[0].link.split("&page=")[0] : null;
+  const baseUrl = lastValue[0] ? lastValue[0].link.split("?page=")[0] : null;
   let listPage = [];
 
   if (lastPage) {
@@ -35,20 +34,19 @@ export default function PaginationPack(props) {
       listPage.push(i);
     }
   }
-
   return (
     <Pagination>
       <Pagination.First
         disabled={!firstValue}
         onClick={() => {
-          firstValue && props.getAPI(firstValue.link);
+          firstValue && props.getAPIPagination(firstValue.link, props.token);
           props.setIsLoading(true);
         }}
       />
       <Pagination.Prev
         disabled={!preValue}
         onClick={() => {
-          preValue && props.getAPI(preValue.link);
+          preValue && props.getAPIPagination(preValue.link, props.token);
           props.setIsLoading(true);
         }}
       />
@@ -58,7 +56,7 @@ export default function PaginationPack(props) {
             <Pagination.Item
               active={item === currPage}
               onClick={() => {
-                props.getAPI(baseUrl + `&page=${item}`);
+                props.getAPIPagination(baseUrl + `?page=${item}`, props.token);
                 props.setIsLoading(true);
               }}
             >
@@ -70,7 +68,7 @@ export default function PaginationPack(props) {
 
       <Pagination.Item
         onClick={() => {
-          props.getAPI(baseUrl + `&page=${lastPage}`);
+          props.getAPIPagination(baseUrl + `?page=${lastPage}`, props.token);
           props.setIsLoading(true);
         }}
       >
@@ -79,13 +77,13 @@ export default function PaginationPack(props) {
       <Pagination.Next
         disabled={!nextValue}
         onClick={() => {
-          props.getAPI(nextValue[0].link);
+          props.getAPIPagination(nextValue[0].link, props.token);
           props.setIsLoading(true);
         }}
       />
       <Pagination.Last
         onClick={() => {
-          props.getAPI(lastValue[0].link);
+          props.getAPIPagination(lastValue[0].link, props.token);
           props.setIsLoading(true);
         }}
       />

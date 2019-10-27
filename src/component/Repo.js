@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -19,6 +19,8 @@ import { Tab, Tabs } from "react-bootstrap";
 import moment from "moment";
 import LabelsDisplay from "./LabelsDisplay";
 import { Link } from "react-router-dom";
+import DropDownGrp from "./DropDownGrp";
+import PsudoContainer from "./PsudoContainer";
 
 export default function Repo(props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,27 +29,81 @@ export default function Repo(props) {
   const [queryText, setQueryText] = useState("");
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
+  const [openIssues, setOpenIssues] = useState(0);
+  const [closeIssues, setCloseIssues] = useState(0);
 
   function refreshPage() {
     window.location.reload();
   }
 
-  const onSubmitIssue = () => {
-    setIsOpen(false);
-    console.log(queryText);
+  const headers = {
+    "User-Agent": "Mozilla/5.0",
+    Authorization: `token ${props.token && props.token.split("&")[0]}`,
+    "Content-type": "application/json",
+    Accept: "application/vnd.github+json"
+  };
+  useEffect(() => {
+    getOpenIssues(props.currentOwner, props.currentRepo);
+    getCloseIssues(props.currentOwner, props.currentRepo);
+  }, []);
+
+  const getOpenIssues = async (user, repo) => {
+    const token = sessionStorage.getItem("token");
+    const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:open&per_page=20`;
+    const headers = {
+      Accept: "application / vnd.github.v3 + json"
+    };
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers
+    });
+    const openData = await response.json();
+    setOpenIssues(openData);
+    console.log(
+      "open data called by Chloe",
+      openData,
+      'open issues"',
+      openIssues
+    );
   };
 
-  const popover = (
-    <Popover id="popover-basic">
-      <Popover.Title as="h3"> </Popover.Title>
-      <Popover.Content>
-        And here's some <strong>amazing</strong> content. It's very engaging.
-        right?
-      </Popover.Content>
-    </Popover>
-  );
+  const getCloseIssues = async (user, repo) => {
+    const token = sessionStorage.getItem("token");
+    const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:closed&per_page=20`;
+    const headers = {
+      Accept: "application / vnd.github.v3 + json"
+    };
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers
+    });
+    const closeData = await response.json();
+    setCloseIssues(closeData);
+  };
+
+  const onSubmitIssue = async e => {
+    e.preventDefault();
+    const url = `https://api.github.com/repos/${props.currentOwner}/${props.currentRepo}/issues`;
+
+    const post = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        title: queryTitle,
+        body: queryText
+        // assignees: ["haichungcn"],
+        // labels: ["bug"]
+      })
+    });
+  };
+
   return (
     <Container>
+      <PsudoContainer
+        currentOwner={props.currentOwner}
+        currentRepo={props.currentRepo}
+      />
+
       <div className="searchIssue_newIssue">
         {props.isError ? (
           ""
@@ -58,7 +114,10 @@ export default function Repo(props) {
               event.preventDefault();
               props.searchIssues(event);
             }}
-            onChange={event => {event.preventDefault();props.setQuery(event.target.value)}}
+            onChange={event => {
+              event.preventDefault();
+              props.setQuery(event.target.value);
+            }}
           >
             <FormControl
               type="text"
@@ -76,6 +135,7 @@ export default function Repo(props) {
             </Button>
           </Form>
         )}
+
         <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
           New issue
         </button>
@@ -92,6 +152,7 @@ export default function Repo(props) {
           </button>
         )}
       </div>
+
       {props.isError ? (
         <Card className="error-message-issue">
           <Card.Body>
@@ -116,88 +177,34 @@ export default function Repo(props) {
                     <Col lg={4} className="totalcount">
                       <a
                         href="#"
-                        onClick={() => props.setIssues(props.openIssues.items)}
+                        onClick={() => props.setIssues(openIssues.items)}
                       >
-                        <img className="stateOpen" src="img/open.svg" />
-                        {props.openIssues && props.openIssues.total_count}{" "}
-                        opened{" "}
+                        <img className="stateOpen" src="/img/open.svg" />
+                        {openIssues.total_count} opened{" "}
                       </a>
 
                       <a
                         href="#"
-                        onClick={() => props.setIssues(props.closeIssues.items)}
+                        onClick={() => props.setIssues(closeIssues.items)}
                       >
-                        <img className="stateClose2" src="img/success.svg" />
-                        {props.closeIssues &&
-                          props.closeIssues.total_count}{" "}
-                        closed{" "}
+                        <img className="stateClose2" src="/img/success.svg" />
+                        {closeIssues.total_count} closed{" "}
                       </a>
                     </Col>
                     <Col lg={8}>
-                      <div className="DropdownGrp">
-                        <DropdownButton
-                          bsPrefix={"default"}
-                          id="dropdown-button"
-                          title="Author"
-                        >
-                          <Dropdown.Item href="#/action-1">
-                            Author
-                          </Dropdown.Item>
-                        </DropdownButton>
-                        <DropdownButton
-                          bsPrefix={"default"}
-                          id="dropdown-basic-button"
-                          title="Labels "
-                        >
-                          <Dropdown.Item href="#/action-1">
-                            Labels{" "}
-                          </Dropdown.Item>
-                        </DropdownButton>
-                        <DropdownButton
-                          bsPrefix={"default"}
-                          id="dropdown-basic-button"
-                          title="Projects"
-                        >
-                          <Dropdown.Item href="#/action-1">
-                            Projects
-                          </Dropdown.Item>
-                        </DropdownButton>
-                        <DropdownButton
-                          bsPrefix={"default"}
-                          id="dropdown-basic-button"
-                          title="Milestone"
-                        >
-                          <Dropdown.Item href="#/action-1">
-                            Milestones
-                          </Dropdown.Item>
-                        </DropdownButton>
-                        <DropdownButton
-                          bsPrefix={"default"}
-                          id="dropdown-basic-button"
-                          title="Assignee"
-                        >
-                          <Dropdown.Item href="#/action-1">
-                            Assignee
-                          </Dropdown.Item>
-                        </DropdownButton>
-                        <DropdownButton
-                          bsPrefix={"default"}
-                          id="dropdown-basic-button"
-                          title="Sort"
-                        >
-                          <Dropdown.Item href="#/action-1">Sort</Dropdown.Item>
-                        </DropdownButton>
-                      </div>
+                      {" "}
+                      <DropDownGrp />
                     </Col>
                   </Row>
                 </Container>
               </div>
             </Col>
           </Row>
+
           <Row>
             {props.issues &&
               props.issues.map(item => {
-                // console.log("issue, listen to charles", item);
+                console.log("issue, listen to charles", item);
                 return (
                   <Col key={`issue#${item.number}`} lg={12}>
                     <Card>
@@ -212,12 +219,12 @@ export default function Repo(props) {
                                   {item.state === "open" ? (
                                     <img
                                       className="stateOpen"
-                                      src="img/open.svg"
+                                      src="/img/open.svg"
                                     />
                                   ) : (
                                     <img
                                       className="stateClose"
-                                      src="img/success.svg"
+                                      src="/img/success.svg"
                                     />
                                   )}{" "}
                                   <br />
@@ -225,10 +232,8 @@ export default function Repo(props) {
                                 <a href="#">
                                   {" "}
                                   {item.title}
-                                  <br />{" "}
-                                </a>{" "}
-                                <br />
-                                <LabelsDisplay labels={item.labels} />
+                                  <LabelsDisplay labels={item.labels} />
+                                </a>
                               </Card.Title>
                             </Link>
                             <Card.Text>
@@ -377,7 +382,9 @@ export default function Repo(props) {
             <button
               disabled={!queryTitle}
               className="btn btn-primary"
-              onClick={() => onSubmitIssue()}
+              onClick={event => {
+                onSubmitIssue(event);
+              }}
             >
               Submit new issue
             </button>
