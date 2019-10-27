@@ -18,7 +18,7 @@ import ReactMarkdown from "react-markdown";
 import { Tab, Tabs } from "react-bootstrap";
 import moment from "moment";
 import LabelsDisplay from "./LabelsDisplay";
-import { Link } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import DropDownGrp from "./DropDownGrp";
 import PsudoContainer from "./PsudoContainer";
 
@@ -29,9 +29,14 @@ export default function Repo(props) {
   const [queryText, setQueryText] = useState("");
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
-  
+  let { repo, owner } = useParams();
+
   const [openIssues, setOpenIssues] = useState(0);
   const [closeIssues, setCloseIssues] = useState(0);
+
+  const token = sessionStorage.getItem('token');
+
+  console.log('locationRepo: ', props)
 
   const headers = {
     "User-Agent": "Mozilla/5.0",
@@ -42,8 +47,8 @@ export default function Repo(props) {
   useEffect(() => {
     getOpenIssues(props.currentOwner, props.currentRepo);
     getCloseIssues(props.currentOwner, props.currentRepo);
- }, []);
-  
+  }, [props.issues]);
+
 
   const getOpenIssues = async (user, repo) => {
     const token = sessionStorage.getItem('token');
@@ -57,9 +62,9 @@ export default function Repo(props) {
     });
     const openData = await response.json();
     setOpenIssues(openData);
-    console.log ('open data called by Chloe', openData, 'open issues"',openIssues)
+    // console.log('open data called by Chloe', openData, 'open issues"', openIssues)
   };
-  
+
   const getCloseIssues = async (user, repo) => {
     const token = sessionStorage.getItem('token');
     const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:closed&per_page=20`;
@@ -93,9 +98,10 @@ export default function Repo(props) {
 
   return (
     <Container>
+      <p className="directoryIndicator mt-2 mb-1 pl-0"><Link to="/">{owner}</Link>/<Link to={`/${owner}/${repo}/issues`}>{repo}</Link></p>
       <PsudoContainer
-       currentOwner = {props.currentOwner} 
-       currentRepo = {props.currentRepo}
+        currentOwner={props.currentOwner}
+        currentRepo={props.currentRepo}
       />
       <div className="searchIssue_newIssue">
         <Form
@@ -116,7 +122,7 @@ export default function Repo(props) {
             Submit
           </Button>
           {isClear && (
-            <button onClick={() => props.getAPI()} className="clear-search">
+            <button onClick={() => props.getAPI(owner, repo, token)} className="clear-search">
               Clear current search query, filters, and sorts
             </button>
           )}
@@ -146,10 +152,10 @@ export default function Repo(props) {
                     <img className="stateClose2" src="/img/success.svg" />
                     {closeIssues.total_count} closed{" "}
                   </a>
-                  </Col>
-                 <Col lg= {8}> <DropDownGrp/>
-                 </Col>
-                
+                </Col>
+                <Col lg={8}> <DropDownGrp />
+                </Col>
+
               </Row>
             </Container>
           </div>
@@ -157,9 +163,9 @@ export default function Repo(props) {
       </Row>
 
       <Row>
-        {props.issues &&
+        {props.issues.length > 0 &&
           props.issues.map(item => {
-            console.log("issue, listen to charles", item);
+            // console.log("issue, listen to charles", item);
             return (
               <Col key={`issue#${item.number}`} lg={12}>
                 <Card>
@@ -172,10 +178,10 @@ export default function Repo(props) {
                           <Card.Title>
                             <div className="State">
                               {item.state === "open" ? (
-                                <img className="stateOpen" src="/img/open.svg"/>
+                                <img className="stateOpen" src="/img/open.svg" />
                               ) : (
-                                <img className="stateClose" src="/img/success.svg"/>
-                              )}{" "}
+                                  <img className="stateClose" src="/img/success.svg" />
+                                )}{" "}
                               <br />
                             </div>
                             <a href="#">
@@ -183,9 +189,9 @@ export default function Repo(props) {
                               {item.title}
                               <LabelsDisplay labels={item.labels} />
                             </a>
-                            
+
                           </Card.Title>
-                          
+
                         </Link>
                         <Card.Text>
                           #{item.number} {item.state}{" "}
@@ -266,7 +272,7 @@ export default function Repo(props) {
                 href={props.html_user}
                 target="_blank"
               >
-                <img className="avatar" src= {props.avatar_url} alt="avata" />
+                <img className="avatar" src={props.avatar_url} alt="avata" />
               </a>
             </span>
             <div className="comment">

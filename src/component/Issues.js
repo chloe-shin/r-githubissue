@@ -2,19 +2,25 @@ import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import moment from "moment";
 import { Row, Col, Badge, Button } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { Link, useParams, useHistory, useLocation } from "react-router-dom";
 
 export default function Issues(props) {
-  let { issues, comments, setIssueNumber, currentUser } = props;
-  let { number } = useParams();
-  let issue = issues.find(issue => issue.number === parseInt(number));
+  const [issue, setIssue] = useState({});
+  let { issues, comments, setIssueNumber, currentUser, currentIssue } = props;
+  let { owner, repo, number } = useParams();
   const [commentBox, setComment] = useState("")
+  
+  // console.log('inIssue', props);
+  const url = issue && issue.url+"/comments";
+
+  const getIssue = (issues) => {
+    let i = issues.find(issue => issue.number === parseInt(number))
+    setIssue(i);
+  }
 
   useEffect(() => {
-    setIssueNumber(number);
-  }, [number]);
-  
-  const url = issue && issue.url+"/comments";
+    getIssue(issues);
+  }, [issues])
 
   const headers = {
     "User-Agent": "Mozilla/5.0",
@@ -40,11 +46,12 @@ export default function Issues(props) {
 
     // alert("res", result)
   }
-  if (issue) {
+  if (issue.title) {
     return (
       <>
-        <div className="outterContainer">
-          <Row>
+        <div className="outterContainer px-2 px-md-5">
+          <p className="directoryIndicator"><Link to="/">{owner}</Link>/<Link to={`/${owner}/${repo}/issues`}>{repo}</Link>/issues/#{number}</p>
+          <Row fluid="true" className="m-0">
             <Col lg={10}>
               <h3>
                 {issue.title}{" "}
@@ -65,7 +72,7 @@ export default function Issues(props) {
                 {issue.comments} comments
               </span>
             </Col>
-            <Col></Col>
+            <div className="rightCol"></div>
           </Row>
           <hr />
           <Row className="container-fluid m-0 singleDisscusion">
@@ -75,7 +82,7 @@ export default function Issues(props) {
               className="avatarIssue"
               alt={`${issue.user.login}'s avatar`}
             />
-            <Col lg={9} className="col discussionBox">
+            <Col className="col discussionBox">
               <div className="discussionHeader">
                 <span>
                   <strong>{issue.user.login}</strong> commented{" "}
@@ -97,7 +104,7 @@ export default function Issues(props) {
                 ></ReactMarkdown>
               </div>
             </Col>
-            <Col className="rightCol">
+            <div className="rightCol">
               <p>
                 <strong>Assignees</strong>
               </p>
@@ -118,9 +125,9 @@ export default function Issues(props) {
               </p>
               {!issue.assignee && <p>None yet</p>}
               <hr />
-            </Col>
+            </div>
           </Row>
-          {comments &&
+          {comments.length > 0 &&
             comments.map(comment => {
               return (
                 <>
@@ -134,7 +141,7 @@ export default function Issues(props) {
                       className="avatarIssue"
                       alt={`${comment.user.login}'s avatar`}
                     />
-                    <Col lg={9} className="discussionBox">
+                    <Col className="discussionBox">
                       <div className="discussionHeader">
                         <span>
                           <strong>{comment.user.login}</strong> commented{" "}
@@ -160,7 +167,7 @@ export default function Issues(props) {
                         ></ReactMarkdown>
                       </div>
                     </Col>
-                    <Col className="rightCol"></Col>
+                    <div className="rightCol"></div>
                   </Row>
                 </>
               );

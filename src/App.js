@@ -11,6 +11,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
+  useParams
 } from "react-router-dom";
 
 // Can be a string as well. Need to ensure each key-value pair ends with ;
@@ -30,8 +31,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
-  // const [openIssues, setOpenIssues] = useState([]);
-  // const [closeIssues, setCloseIssues] = useState([]);
   const [comments, setComments] = useState([]);
   const [currentUser, setCurrentUser] = useState();
   const [currentOwner, setCurrentOwner] = useState("");
@@ -40,21 +39,23 @@ function App() {
   const [search, setSearch] = useState("Top repo has more than 100000 stars.");
   const [isLanding, setIsLanding] = useState(false);
   const [landingData, setLandingData] = useState([]);
+  const [currentIssue, setCurrentIssue] = useState({});
 
   const CurrentUser = async passedToken => {
     const url = `https://api.github.com/user?access_token=${passedToken}`;
     const response = await fetch(url);
     const data = await response.json();
     setCurrentUser(data);
-    console.log("data", data);
+    // console.log("data", data);
   };
 
-  const getAPI = async existingToken => {
-    //Hai- made url a varible and insert existingToken as a dynamic varible
-    const url = `https://api.github.com/repos/facebook/react/issues`;
+  const getAPI = async (currentOwner, currentRepo, token) => {
+    //Hai- made url a varible and insert token as a dynamic varible
+    if(!token) token = sessionStorage.getItem('token');
+    const url = `https://api.github.com/repos/${currentOwner}/${currentRepo}/issues`;
     const headers = {
       Accept: "application / vnd.github.v3 + json",
-      Authorization: `token ${existingToken.split("&")[0]}`
+      Authorization: `token ${token.split("&")[0]}`
     };
 
     const response = await fetch(url, {
@@ -65,7 +66,7 @@ function App() {
     const jsonData = await response.json();
     // const urls = response.headers.get("link").split(",").map(item=>item.split(";")[0].replace("<","").replace(">",""));
     // console.log(urls)
-    console.log("issue", issues);
+    // console.log("issue", jsonData);
     const links =
       response.headers.get("link") &&
       response.headers
@@ -197,13 +198,11 @@ function App() {
     }
   };
 
-  // console.log("token", search);
-
   //function to get all the comments of the current Issue from api
-  const getComments = async number => {
+  const getComments = async (owner, repo, number) => {
     if (number && token) {
       const response = await fetch(
-        `https://api.github.com/repos/${currentOwner}/${currentRepo}/issues/${number}/comments`,
+        `https://api.github.com/repos/${owner}/${repo}/issues/${number}/comments`,
         {
           headers: {
             Authorization: `token ${token}`
@@ -216,7 +215,6 @@ function App() {
       return data;
     } else console.log("there is no number passed in to getComments");
   }; //Hai - start using api
-
 
   const getLandingRepo = async tok => {
     const url = `https://api.github.com/search/repositories?q=stars:>=100000&fork:false?access_token=${tok}`;
@@ -266,7 +264,12 @@ function App() {
     setIsLoading(false);
   };
 
+  const findIssue = (issues) => {
+    setCurrentIssue(issues.find(issue => issue.number === parseInt(issueNumber)));
+  }
+
   useEffect(() => {
+    
     const existingToken = sessionStorage.getItem("token");
     const accessToken =
       window.location.search.split("=")[0] === "?access_token"
@@ -289,15 +292,23 @@ function App() {
 
     if (existingToken) {
       setToken(existingToken.split("&")[0]);
-      // getAPI(existingToken);
+      // getAPI(currentOwner, currentRepo, existingToken);
       getLandingRepo(existingToken.split("&")[0]);
       CurrentUser(existingToken);
+      // getComments(currentOwner, currentRepo, issueNumber);
     }
   }, []);
 
   useEffect(() => {
-    getComments(issueNumber);
-  }, [issueNumber]);
+    if (currentOwner && currentRepo) {
+      getAPI(currentOwner, currentRepo, token);
+      getComments(currentOwner, currentRepo, issueNumber);}
+  }, [currentOwner, currentRepo, issueNumber, token]);
+
+  // useEffect(() => {
+  //     console.log('useEffect3', issues, issueNumber)
+  //     console.log('sdfdfsdfsdfsdfsdfsdfsdfsdfsdfsdf', issues.find(issue => issue.number === parseInt(issueNumber)));
+  // }, [currentOwner, currentRepo, issues, issueNumber])
 
   // console.log('token state:', token)
   // console.log("pageStatus", pageStatus)
@@ -307,7 +318,6 @@ function App() {
 
       <Switch>
         <Route path="/" exact>
-          <div>
             <LandingPage
               landingData={landingData}
               searchRepo={searchRepo}
@@ -317,58 +327,69 @@ function App() {
               setCurrentOwner={setCurrentOwner}
               setCurrentRepo={setCurrentRepo}
             />
-          </div>
         </Route>
-        <Route exact path={`/:owner/:repo/issues`} exact>
-          <Nav currentOwner={currentOwner} currentRepo={currentRepo} />
-          {isLoading ? (
-            <div className="sweet-loading">
-              <RingLoader
-                css={override}
-                sizeUnit={"px"}
-                size={150}
-                color={"rgb(54, 215, 183)"}
-                loading={isLoading}
-              />
-            </div>
-          ) : (
-            <Repo
-              query={query}
-              issues={issues}
-              setIssues={setIssues}
-              currentUser={currentUser}
-              currentOwner={currentOwner}
-              currentRepo={currentRepo}
-              setQuery={setQuery}
-              getAPI={getAPI}
-              isClear={isClear}
-              setIsClear={setIsClear}
-              token={token}
-            />
-          )}
-          <PaginationPack
-            pageStatus={pageStatus && pageStatus}
-            setIssues={setIssues}
-            getAPIPagination={getAPIPagination}
-            setIsLoading={setIsLoading}
-            token={token}
-          />
-          )}
-        </Route>
+        <Route exact path={`/:owner/:repo/issues`} component={({match}) => 
+          { 
+            let { owner, repo } = match.params;
+            setCurrentOwner(owner);
+            setCurrentRepo(repo);
+            return (
+              <>
+                <Nav currentOwner={currentOwner} currentRepo={currentRepo} />
+                {isLoading ? (
+                  <div className="sweet-loading">
+                    <RingLoader
+                      css={override}
+                      sizeUnit={"px"}
+                      size={150}
+                      color={"rgb(54, 215, 183)"}
+                      loading={isLoading}
+                    />
+                  </div>
+                ) : (
+                  <Repo
+                    query={query}
+                    issues={issues}
+                    setIssues={setIssues}
+                    currentUser={currentUser}
+                    currentOwner={currentOwner}
+                    currentRepo={currentRepo}
+                    setQuery={setQuery}
+                    getAPI={getAPI}
+                    isClear={isClear}
+                    setIsClear={setIsClear}
+                    token={token}
+                  />
+                )}
+                <PaginationPack
+                  pageStatus={pageStatus && pageStatus}
+                  setIssues={setIssues}
+                  getAPIPagination={getAPIPagination}
+                  setIsLoading={setIsLoading}
+                  token={token}
+                />
+            </>
+            )
+          }} />
         <Route
           exact
           path={`/:owner/:repo/issues/:number`}
-          children={
-            <>
+          component={({match}) => {
+            let {owner, repo, number} = match.params
+            setCurrentOwner(owner);
+            setCurrentRepo(repo);
+            setIssueNumber(number);
+            return <>
               <Nav currentOwner={currentOwner} currentRepo={currentRepo} />
-              <Issues
+              {issues.length>0 && <Issues
                 issues={issues}
                 comments={comments}
-                setIssueNumber={setIssueNumber}
+                setIssueNumber={issueNumber}
                 currentUser={currentUser}
-                token={token}
-              />
+                currentIssue={currentIssue}
+              />}
             </>
+          }
           }
         />
         <Route path="/">

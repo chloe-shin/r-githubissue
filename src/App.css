@@ -1,5 +1,25 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Montserrat&display=swap");
 
+#root {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+nav {
+  width:100vw;
+  background-color: var(--primary-dark-background) !important;
+}
+
 .App {
   font-family: "Roboto", sans-serif;
   min-height: 100vh;
@@ -9,8 +29,10 @@
 }
 /* Hai Chung */
 :root {
+  --secondary-text: #949494;
   --primary-border: #d1d5d9;
   --primary-background: white;
+  --primary-dark-background: #151a1e;
   --secondary-background: #e8eaec;
   --primary-strong: #171717;
   --primary-link: black;
@@ -18,8 +40,18 @@
   --threshold:60;
 }
 
+.directoryIndicator{
+  padding-left: 13px;
+  color: var(--secondary-text);
+  font-size: 20px !important;
+}
+.directoryIndicator a{
+  color: rgb(88, 134, 235);
+}
+
 .outterContainer {
-  margin: 2rem 14rem;
+  margin: 0;
+  margin-top: 1rem;
   background-color: var(--primary-background);
   padding: 0;
 }
@@ -59,8 +91,9 @@ span {
   border-radius: 3px;
 }
 
-.outterContainer .rightCol {
+.rightCol {
   padding:0;
+  width: 13rem;
 }
 
 .timeLine {
@@ -72,6 +105,7 @@ span {
 .discussionBox {
   height: auto;
   border-radius: 3px;
+  width: 30rem;
 }
 
 .discussionHeader {
@@ -168,6 +202,21 @@ span {
   height: 10rem;
   padding: 12px 13px;
   resize: none;
+}
+
+.logoRowLP {
+  padding-top: 60px;
+  display: flex;
+  justify-content: center;
+}
+
+.logoLandingPage {
+  transform: scale(2);
+  margin-right: 30px;
+}
+
+.titleLandingPage {
+  color:white;
 }
 
 /* Chloe */
@@ -358,7 +407,7 @@ a {
 }
 .psudo {
   border: 1px solid rgba(0, 0, 0, 0.1);
-  margin-top: 30px;
+  margin-top: 10px;
   padding: 30px;
   text-align: center;
 }
@@ -664,7 +713,7 @@ textarea {
   min-height: 20vh;
   /* background-color: white; */
   /* border: 1px solid white; */
-  margin-top: 10vh;
+  margin-top: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -4,16 +4,25 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 // import { faCoffee } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import PaginationPack from "./Pagination";
+
 
 export default function LandingPage(props) {
   const [query, setQuery] = useState("");
-  console.log("prprpr", props.search);
+  // console.log("prprpr", props.search);
 
   // console.log("landing", props.landingData.items && props.landingData.items);
 
   return (
     <Container fluid="true" className="landing-page">
+      <Row fluid="true" className="logoRowLP">
+        <img
+          src="/img/dog.svg"
+          width="30"
+          height="30"
+          className="d-inline-block align-top logoLandingPage"
+          alt="React Bootstrap logo"
+        /> <h1 className="titleLandingPage">CC HUB</h1>
+      </Row>
       <Row>
         <Col className="landing-right-side" lg={12}>
           <form
@@ -37,11 +46,11 @@ export default function LandingPage(props) {
           </form>
         </Col>
         <Col className="landing-left-side" lg={12}>
-          <h2></h2>
-          <Row>
+          {/* <h2></h2> */}
+          <Row className="px-5">
             {props.landingData.items &&
               props.landingData.items.map(item => {
-                console.log("item", item);
+                // console.log("item", item);
                 return (
                   <Col lg={6}>
                     <div className="item-repo">
