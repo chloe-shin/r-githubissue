@@ -374,6 +374,7 @@ function App() {
               setIsClear={setIsClear}
               searchIssues={searchIssues}
               isError={isError}
+              token={token}
               setIsError={setIsError}
             />
           )}
