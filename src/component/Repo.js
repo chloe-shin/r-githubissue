@@ -7,6 +7,8 @@ import {
   Col,
   Dropdown,
   DropdownButton,
+  Form,
+  FormControl,
   OverlayTrigger,
   Popover
 } from "react-bootstrap";
@@ -15,37 +17,75 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import ReactMarkdown from "react-markdown";
 import { Tab, Tabs } from "react-bootstrap";
 import moment from "moment";
-import LabelsDisplay from './LabelsDisplay';
-import {Link} from 'react-router-dom';
-
+import LabelsDisplay from "./LabelsDisplay";
+import { Link } from "react-router-dom";
 
 export default function Repo(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [key, setKey] = useState("write");
   const [queryTitle, setQueryTitle] = useState("");
   const [queryText, setQueryText] = useState("");
-
-  const onSubmitIssue = () => {
-    setIsOpen(false);
-    console.log(queryText);
+  const [query, setQuery] = useState("");
+  const [isClear, setIsClear] = useState(false);
+  
+  const headers = {
+    "User-Agent": "Mozilla/5.0",
+    Authorization: `token ${props.token && props.token.split("&")[0]}`,
+    "Content-type": "application/json",
+    Accept: "application/vnd.github+json"
   };
 
+  const onSubmitIssue = async e => {
+    e.preventDefault();
+    const url = `https://api.github.com/repos/nakasaky55/fake-imdb/issues`;
 
-  const popover =
+    const post = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify({
+        title: queryTitle,
+        body: queryText
+        // assignees: ["haichungcn"],
+        // labels: ["bug"]
+      })
+    });
+  };
+
+  const popover = (
     <Popover id="popover-basic">
-      <Popover.Title as="h3">  </Popover.Title>
+      <Popover.Title as="h3"> </Popover.Title>
       <Popover.Content>
         And here's some <strong>amazing</strong> content. It's very engaging.
         right?
       </Popover.Content>
     </Popover>
-
-    ;
-
-
+  );
   return (
     <Container>
-      <div>
+      <div className="searchIssue_newIssue">
+        <Form
+          inline
+          onSubmit={event => props.searchIssues(event)}
+          onChange={event => props.setQuery(event.target.value)}
+        >
+          <FormControl
+            type="text"
+            placeholder="Search all issues.."
+            className=" mr-sm-2"
+          />
+          <Button
+            className="search-button"
+            type="submit"
+            onClick={() => setIsClear(!false)}
+          >
+            Submit
+          </Button>
+          {isClear && (
+            <button onClick={() => props.getAPI()} className="clear-search">
+              Clear current search query, filters, and sorts
+            </button>
+          )}
+        </Form>
         <button className="btn btn-primary" onClick={() => setIsOpen(true)}>
           New issue
         </button>
@@ -56,7 +96,6 @@ export default function Repo(props) {
             <Container>
               <Row>
                 <Col lg={4} className="totalcount">
-
                   <a
                     href="#"
                     onClick={() => props.setIssues(props.openIssues.items)}
@@ -132,30 +171,33 @@ export default function Repo(props) {
       <Row>
         {props.issues &&
           props.issues.map(item => {
-            console.log('issue, listen to charles', item);
+            console.log("issue, listen to charles", item);
             return (
               <Col key={`issue#${item.number}`} lg={12}>
                 <Card>
                   <Row className="cardrow">
                     <Col lg={10}>
                       <Card.Body>
-                        <Link to={`/${props.currentOwner}/${props.currentRepo}/issues/${item.number}`}>
+                        <Link
+                          to={`/${props.currentOwner}/${props.currentRepo}/issues/${item.number}`}
+                        >
                           <Card.Title>
                             <div className="State">
                               {item.state === "open" ? (
                                 <img className="stateOpen" src="img/open.svg" />
                               ) : (
-                                  <img
-                                    className="stateClose"
-                                    src="img/success.svg"
-                                  />
-                                )}{" "}
+                                <img
+                                  className="stateClose"
+                                  src="img/success.svg"
+                                />
+                              )}{" "}
                               <br />
                             </div>
                             <a href="#">
                               {" "}
                               {item.title} <br />{" "}
-                            </a> <br />
+                            </a>{" "}
+                            <br />
                             <LabelsDisplay labels={item.labels} />
                           </Card.Title>
                         </Link>
@@ -165,21 +207,25 @@ export default function Repo(props) {
                             .startOf("day")
                             .fromNow()}{" "}
                           by
-                            <OverlayTrigger trigger="hover" placement="right" overlay=
-                            {
+                          <OverlayTrigger
+                            trigger="hover"
+                            placement="right"
+                            overlay={
                               <Popover id="popover-basic">
                                 <Popover.Title as="h3">
-                                  <img className="popOverimg" src={item.user.avatar_url} />
+                                  <img
+                                    className="popOverimg"
+                                    src={item.user.avatar_url}
+                                  />
                                   <strong>{item.user.login}</strong>
                                 </Popover.Title>
-                                <Popover.Content>
-                                </Popover.Content>
+                                <Popover.Content></Popover.Content>
                               </Popover>
-                            }>
+                            }
+                          >
                             <a href={item.user.html_url}> {item.user.login} </a>
                           </OverlayTrigger>
                           <br />
-
                         </Card.Text>
                       </Card.Body>
                     </Col>
@@ -187,22 +233,31 @@ export default function Repo(props) {
                     <Col lg={2}>
                       <div className="User">
                         <img className="avatar" src={item.user.avatar_url} />
-                        <OverlayTrigger trigger="hover" placement="left" overlay={
-                          <Popover id="popover-basic">
-                            <Popover.Title as="h3">
-                              <img className="popOverimg" src={item.user.avatar_url} />
-                              <strong>{item.user.login}</strong>
-                            </Popover.Title>
-                            <Popover.Content>
-                              {item.user.site_admin}
-
-                            </Popover.Content>
-                          </Popover>
-                        }>
+                        <OverlayTrigger
+                          trigger="hover"
+                          placement="left"
+                          overlay={
+                            <Popover id="popover-basic">
+                              <Popover.Title as="h3">
+                                <img
+                                  className="popOverimg"
+                                  src={item.user.avatar_url}
+                                />
+                                <strong>{item.user.login}</strong>
+                              </Popover.Title>
+                              <Popover.Content>
+                                {item.user.site_admin}
+                              </Popover.Content>
+                            </Popover>
+                          }
+                        >
                           <a href={item.user.html_url}> {item.user.login} </a>
                         </OverlayTrigger>
 
-                        <div className="comment-chloe"><i class="fas fa-comment"></i>{item.comments}</div>
+                        <div className="comment-chloe">
+                          <i class="fas fa-comment"></i>
+                          {item.comments}
+                        </div>
                       </div>
                     </Col>
                   </Row>
@@ -281,7 +336,7 @@ export default function Repo(props) {
             <button
               disabled={!queryTitle}
               className="btn btn-primary"
-              onClick={() => onSubmitIssue()}
+              onClick={event => onSubmitIssue(event)}
             >
               Submit new issue
             </button>

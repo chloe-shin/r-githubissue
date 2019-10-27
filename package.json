@@ -11,7 +11,6 @@
     "bootstrap": "^4.3.1",
     "dotenv": "^8.2.0",
     "markdown-it": "^10.0.0",
-    "parse-link-header": "^1.0.1",
     "moment": "^2.24.0",
     "parse-link-header": "^1.0.1",
     "react": "^16.11.0",
