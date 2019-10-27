@@ -27,7 +27,6 @@ export default function Repo(props) {
   const [key, setKey] = useState("write");
   const [queryTitle, setQueryTitle] = useState("");
   const [queryText, setQueryText] = useState("");
-  const [query, setQuery] = useState("");
   const [isClear, setIsClear] = useState(false);
   const [openIssues, setOpenIssues] = useState(0);
   const [closeIssues, setCloseIssues] = useState(0);
@@ -81,20 +80,23 @@ export default function Repo(props) {
     setCloseIssues(closeData);
   };
 
-  const onSubmitIssue = async e => {
-    e.preventDefault();
+  const postIssues = async () => {
     const url = `https://api.github.com/repos/${props.currentOwner}/${props.currentRepo}/issues`;
-
     const post = await fetch(url, {
       method: "POST",
-      headers: headers,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `token ${props.token}`
+      },
       body: JSON.stringify({
         title: queryTitle,
         body: queryText
-        // assignees: ["haichungcn"],
-        // labels: ["bug"]
       })
     });
+  };
+  const onSubmitIssue = async () => {
+    postIssues();
+    setIsOpen(false);
   };
 
   return (
@@ -321,12 +323,12 @@ export default function Repo(props) {
         <div className="col-md-9 col-sm-12">
           <div className="composer new-comment">
             <span className="comment-avatar">
-              <a
-                className="d-inline-block"
-                href={props.html_user}
-                target="_blank"
-              >
-                <img className="avatar" src={props.avatar_url} alt="avata" />
+              <a className="d-inline-block" target="_blank">
+                <img
+                  className="avatar"
+                  src={props.currentUser && props.currentUser.avatar_url}
+                  alt="avata"
+                />
               </a>
             </span>
             <div className="comment">
