@@ -54,7 +54,8 @@ export default function Repo(props) {
     const token = sessionStorage.getItem("token");
     const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:open&per_page=20`;
     const headers = {
-      Accept: "application / vnd.github.v3 + json"
+      Accept: "application / vnd.github.v3 + json",
+      Authorization: `token ${token.split("&")[0]}`
     };
     const response = await fetch(url, {
       method: "GET",
@@ -74,7 +75,8 @@ export default function Repo(props) {
     const token = sessionStorage.getItem("token");
     const url = `https://api.github.com/search/issues?q=repo:${user}/${repo}+type:issue+state:closed&per_page=20`;
     const headers = {
-      Accept: "application / vnd.github.v3 + json"
+      Accept: "application / vnd.github.v3 + json",
+      Authorization: `token ${token.split("&")[0]}`
     };
     const response = await fetch(url, {
       method: "GET",
@@ -90,7 +92,7 @@ export default function Repo(props) {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `token ${props.token}`
+        Authorization: `token ${props.token.split("&")[0]}`
       },
       body: JSON.stringify({
         title: queryTitle,

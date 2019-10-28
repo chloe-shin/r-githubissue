@@ -49,7 +49,7 @@ function App() {
     // console.log("data", data);
   };
 
-  const getAPI = async (currentOwner, currentRepo, token) => {
+  const getAPI = async (currentOwner, currentRepo) => {
     //Hai- made url a varible and insert token as a dynamic varible
     if (!token) token = sessionStorage.getItem('token');
     const url = `https://api.github.com/repos/${currentOwner}/${currentRepo}/issues`;
@@ -218,7 +218,7 @@ function App() {
   };
 
   //function to get all the comments of the current Issue from api
-  const getComments = async (owner, repo, number) => {
+  const getComments = async (owner, repo, number, token) => {
     if (number && token) {
       const response = await fetch(
         `https://api.github.com/repos/${owner}/${repo}/issues/${number}/comments`,
@@ -406,6 +406,7 @@ function App() {
                 comments={comments}
                 currentUser={currentUser}
                 getComments={getComments}
+                token={token}
               />}
             </>
           }

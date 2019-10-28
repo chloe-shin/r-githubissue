@@ -31,9 +31,6 @@ export default function Issues(props) {
   };
 
   const postComment = async commentBox => {
-    const body = {
-      value: "hahahahaha"
-    };
     const post = await fetch(url, {
       method: "POST",
       headers: headers,
@@ -44,7 +41,7 @@ export default function Issues(props) {
   };
   const submitIssue = async comment => {
     const result = await postComment(comment);
-    getComments(owner, repo, number);
+    getComments(owner, repo, number, props.token);
     // alert("res", result)
     setComment("");
   };
